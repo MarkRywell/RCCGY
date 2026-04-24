@@ -1,6 +1,6 @@
 function Header() {
   return (
-    <header className="bg-primary text-white px-4 sm:px-6 lg:px-20 py-2 sm:py-1 flex items-start sm:items-center justify-between gap-3 text-xs sm:text-sm">
+    <header className="bg-primary text-white px-4 sm:px-6 lg:px-20 py-2 sm:py-1 flex items-start sm:items-center justify-between gap-3 text-xs">
       <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
         <a
           href="mailto:rannncrewcgy@gmail.com"

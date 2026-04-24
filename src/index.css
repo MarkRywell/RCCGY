@@ -1,0 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap');
+
+@import "tailwindcss";
+
+@layer base {
+  /* Helps prevent accidental horizontal scrolling when components use translate/100vw/etc. */
+  body {
+    overflow-x: hidden;
+  }
+}
+
+@theme {
+  /* Colors */
+  --color-primary: #ff3600;
+  --color-secondary: #0e0d0d;
+
+  /* Font Family */
+  --font-sans: "Google Sans", sans-serif, ui-sans-serif, system-ui;
+
+  /* Breakpoints */
+  --breakpoint-sm: 600px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 992px;
+  --breakpoint-xl: 1200px;
+}

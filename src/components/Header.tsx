@@ -1,6 +1,21 @@
-function Header() {
+type HeaderProps = {
+  hidden?: boolean;
+}
+
+function Header({ hidden = false }: HeaderProps) {
   return (
-    <header className="bg-primary text-white px-4 sm:px-6 lg:px-20 py-2 sm:py-1 flex items-start sm:items-center justify-between gap-3 text-xs">
+    <header
+      className={[
+        'bg-primary text-white px-4 sm:px-6 lg:px-20',
+        'flex items-start sm:items-center justify-between gap-3 text-xs',
+        // animate collapse/expand
+        'overflow-hidden will-change-[max-height,opacity,transform]',
+        'transition-[max-height,opacity,transform] duration-300 ease-in-out',
+        hidden
+          ? 'max-h-0 py-0 opacity-0 -translate-y-2 pointer-events-none'
+          : 'max-h-24 py-2 sm:py-1 opacity-100 translate-y-0',
+      ].join(' ')}
+    >
       <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
         <a
           href="mailto:rannncrewcgy@gmail.com"

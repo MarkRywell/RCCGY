@@ -39,7 +39,7 @@ function Nav() {
     }, [isOpen])
 
     return (
-        <nav className="relative flex items-center justify-between bg-secondary text-white px-4 sm:px-6 lg:px-20 py-4 sm:py-5">
+        <nav className="flex items-center justify-between bg-secondary text-white px-4 sm:px-6 lg:px-20 py-4 sm:py-5">
             <Link to="/" className='flex gap-2 items-center flex-2 group cursor-pointer'>
                 <img src={Logo} alt="Logo" className='max-w-20 max-h-10'/>
                 <h1 className="text-2xl sm:text-3xl font-bold cursor-pointer transition-all duration-200 group-hover:text-primary group-hover:scale-105 origin-left">RCCGY</h1>
@@ -102,7 +102,7 @@ function Nav() {
                 {/* Backdrop */}
                 <div
                     className={
-                        `fixed inset-0 z-40 bg-black/50 transition-opacity duration-300 ${
+                        `fixed inset-0 z-[60] bg-black/50 transition-opacity duration-300 ${
                             isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
                         }`
                     }
@@ -113,7 +113,7 @@ function Nav() {
                 {/* Panel */}
                 <aside
                     className={
-                        `fixed right-0 top-0 z-50 h-dvh w-72 bg-secondary text-white shadow-xl transition-transform duration-300 ${
+                        `fixed right-0 top-0 z-[70] h-dvh w-72 bg-secondary text-white shadow-xl transition-transform duration-300 ${
                             isOpen ? 'translate-x-0' : 'translate-x-full'
                         }`
                     }

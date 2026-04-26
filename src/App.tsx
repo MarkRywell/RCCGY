@@ -1,5 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 
 import Header from './components/Header.tsx';
 import Nav from './components/Nav.tsx';
@@ -14,11 +14,48 @@ const Contact = lazy(() => import('./pages/Contact'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
 function App() {
+  const [hideHeader, setHideHeader] = useState(false);
+  const lastScrollYRef = useRef(0);
+  const tickingRef = useRef(false);
+
+  useEffect(() => {
+    lastScrollYRef.current = window.scrollY;
+
+    const onScroll = () => {
+      if (tickingRef.current) return;
+      tickingRef.current = true;
+
+      window.requestAnimationFrame(() => {
+        const currentY = window.scrollY;
+        const lastY = lastScrollYRef.current;
+        const delta = currentY - lastY;
+
+        // Near the top, always show the header.
+        if (currentY <= 8) {
+          setHideHeader(false);
+        } else if (Math.abs(delta) > 4) {
+          // Scroll direction: down hides, up shows.
+          if (delta > 0) setHideHeader(true);
+          else setHideHeader(false);
+        }
+
+        lastScrollYRef.current = currentY;
+        tickingRef.current = false;
+      });
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   return (
     <>
       <div className="min-h-dvh w-full overflow-x-hidden">
-        <Header />
-        <Nav />
+        {/* Sticky stack: Header collapses, Nav stays visible */}
+        <div className="sticky top-0 z-50">
+          <Header hidden={hideHeader} />
+          <Nav />
+        </div>
         <Suspense fallback={<Loader />}>
           <Routes>
             <Route path="/" element={<Home />} />

@@ -1,5 +1,9 @@
 import BannerImage from '../assets/images/banner.jpg';
 import LaborDay from '../assets/images/events/labor-day.jpg';
+import StatsCard from '../components/StatsCard';
+import { FaPersonRunning } from "react-icons/fa6";
+import { IoIosPeople } from "react-icons/io";
+import { LiaCalendarDaySolid } from "react-icons/lia";
 
 
 function Home() {
@@ -38,9 +42,10 @@ function Home() {
             </div>
           </div>
         </div>
-        <div className='w-full bg-gray-800 flex items-center justify-between px-10 py-5'>
-          <h1 className='text-white'>Hello world</h1>
-          
+        <div className='w-full bg-gray-800 flex items-center justify-center px-20 py-5'>
+          <StatsCard icon={<IoIosPeople />} title="ACTIVE RUNNERS" value={388} unit="+" />
+          <StatsCard icon={<LiaCalendarDaySolid />} title="RUNNING EVENTS" value={3} unit="/wk" />
+          <StatsCard icon={<FaPersonRunning />} title="WEEKLY KILOMETERS RUN" value={30} unit="km" />
         </div>
       </div>
     </>

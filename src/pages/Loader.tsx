@@ -1,5 +1,5 @@
 import { useLottie } from 'lottie-react';
-import runningAnimation from '../assets/images/run.json';
+import runningAnimation from '../assets/logos/run.json';
 
 function Loader() {
 

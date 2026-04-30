@@ -1,9 +1,9 @@
 import { Route, Routes } from 'react-router-dom';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 
-import Header from './components/Header.tsx';
-import Nav from './components/Nav.tsx';
-import Footer from './components/Footer.tsx';
+import Header from './layout/Header.tsx';
+import Nav from './layout/Nav.tsx';
+import Footer from './layout/Footer.tsx';
 import Loader from './pages/Loader.tsx';
 
 const Home = lazy(() => import('./pages/Home'));

@@ -12,7 +12,8 @@
 @theme {
   /* Colors */
   --color-primary: #ff3600;
-  --color-secondary: #0e0d0d;
+  --color-secondary: #fe7a0d;
+  --color-dark: #0e0d0d;
 
   /* Font Family */
   --font-sans: "Google Sans", sans-serif, ui-sans-serif, system-ui;

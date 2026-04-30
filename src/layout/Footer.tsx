@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 function Footer() {
   return (
     <>
-      <footer className="bg-secondary w-full flex flex-col pb-2 pt-4 px-40 relative bottom-0 text-white">
+      <footer className="bg-dark w-full flex flex-col pb-2 pt-4 px-40 relative bottom-0 text-white">
         <div className="flex-4 flex items-start justify-left gap-5 py-5">
           <div className="flex flex-col flex-2">
             <div className="flex flex-col justify-left gap-5">

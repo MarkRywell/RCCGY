@@ -135,7 +135,7 @@ Purpose: avoid accidental horizontal scrolling when components use transforms/10
 ```css
 @theme {
   --color-primary: #ff3600;
-  --color-secondary: #0e0d0d;
+  --color-dark: #0e0d0d;
 
   --font-sans: "Google Sans", sans-serif, ui-sans-serif, system-ui;
 
@@ -148,7 +148,7 @@ Purpose: avoid accidental horizontal scrolling when components use transforms/10
 
 Observed usage in UI (examples):
 
-- `bg-secondary`, `text-primary`
+- `bg-dark`, `text-primary`
 - Responsive modifiers like `sm:`, `md:`, `lg:`
 
 ---

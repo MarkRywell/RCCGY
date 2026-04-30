@@ -111,10 +111,13 @@ Directories:
 
 #### Imports
 
-- Imports Google Sans from Google Fonts.
+- Imports Google Sans and Gothic A1 from Google Fonts.
 - Imports Tailwind:
 
 ```css
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Gothic+A1&display=swap');
+
 @import "tailwindcss";
 ```
 
@@ -124,6 +127,7 @@ Directories:
 @layer base {
   body {
     overflow-x: hidden;
+    font-family: var(--font-sans);
   }
 }
 ```
@@ -135,9 +139,11 @@ Purpose: avoid accidental horizontal scrolling when components use transforms/10
 ```css
 @theme {
   --color-primary: #ff3600;
+  --color-secondary: #fe7a0d;
   --color-dark: #0e0d0d;
 
   --font-sans: "Google Sans", sans-serif, ui-sans-serif, system-ui;
+  --font-serif: "Gothic A1", serif, ui-serif, system-ui;
 
   --breakpoint-sm: 600px;
   --breakpoint-md: 768px;
@@ -150,6 +156,11 @@ Observed usage in UI (examples):
 
 - `bg-dark`, `text-primary`
 - Responsive modifiers like `sm:`, `md:`, `lg:`
+
+Font usage notes:
+
+- Default site font is set globally via `body { font-family: var(--font-sans); }`.
+- To render an element in **Gothic A1**, use Tailwind class `font-serif` (maps to `--font-serif`).
 
 ---
 
@@ -182,3 +193,37 @@ Observed usage in UI (examples):
   - Locks body scrolling while drawer is open
   - Closes on `Escape`
   - Backdrop click closes the menu
+
+---
+
+## 8) Components
+
+### `src/components/StatsCard.tsx`
+
+Purpose: renders a stat card with icon, a main numeric value, and a title.
+
+Props:
+
+```ts
+type StatsCardProps = {
+  icon: React.ReactNode;
+  title: string;
+  value: number | string;
+  /** Small text beside the value (e.g. '+', 'km', '/wk') */
+  unit?: string;
+};
+```
+
+Formatting behavior:
+
+- If `value` is a `number`, it is formatted with `Intl.NumberFormat()` (e.g. `1200 -> 1,200`).
+- If `value` is a `string`, it is displayed as-is.
+- If `unit` is provided, it is rendered beside the value as smaller text.
+
+Example usage (from `src/pages/Home.tsx`):
+
+```tsx
+<StatsCard icon={<IoIosPeople />} title="ACTIVE RUNNERS" value={388} unit="+" />
+<StatsCard icon={<LiaCalendarDaySolid />} title="RUNNING EVENTS" value={1} unit="/wk" />
+<StatsCard icon={<FaPersonRunning />} title="WEEKLY KILOMETERS RUN" value={30} unit="km" />
+```

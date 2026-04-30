@@ -42,7 +42,7 @@ function Home() {
             </div>
           </div>
         </div>
-        <div className='w-full bg-gray-800 flex items-center justify-center px-20 py-5'>
+        <div className='w-full bg-gray-800 flex items-center justify-center px-10 sm:px-20 py-5'>
           <StatsCard icon={<IoIosPeople />} title="ACTIVE RUNNERS" value={388} unit="+" />
           <StatsCard icon={<LiaCalendarDaySolid />} title="RUNNING EVENTS" value={3} unit="/wk" />
           <StatsCard icon={<FaPersonRunning />} title="WEEKLY KILOMETERS RUN" value={30} unit="km" />

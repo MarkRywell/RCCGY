@@ -14,13 +14,15 @@ function StatsCard({ icon, title, value, unit }: StatsCardProps) {
 
     return (
         <>
-            <div className="w-full h-full flex flex-col gap-2 items-center justify-center text-white">
-                <IconContext.Provider value={{ color: "#ff3600", size: "5em" }}>{icon}</IconContext.Provider>
-                <p className="font-bold text-2xl flex items-baseline gap-1">
+            <div className="w-full h-full flex flex-col gap-2 items-center justify-center text-white text-center">
+                <IconContext.Provider value={{ color: "#ff3600", size: "1em" }}>
+                    <span className="text-[3em] sm:text-[5em] md:text-[4em]">{icon}</span>
+                </IconContext.Provider>
+                <p className="font-bold text-xl sm:text-2xl flex items-baseline gap-1">
                     <span>{formattedValue}</span>
                     {unit ? <span className="text-sm font-semibold opacity-90">{unit}</span> : null}
                 </p>
-                <p className="font-semibold">{title}</p>
+                <p className="font-semibold sm:text-base text-sm">{title}</p>
             </div>
         </>
     )

@@ -102,7 +102,7 @@ function Nav() {
                 {/* Backdrop */}
                 <div
                     className={
-                        `fixed inset-0 z-[60] bg-black/50 transition-opacity duration-300 ${
+                        `fixed inset-0 z-60 bg-black/50 transition-opacity duration-300 ${
                             isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
                         }`
                     }
@@ -113,7 +113,7 @@ function Nav() {
                 {/* Panel */}
                 <aside
                     className={
-                        `fixed right-0 top-0 z-[70] h-dvh w-72 bg-secondary text-white shadow-xl transition-transform duration-300 ${
+                        `fixed right-0 top-0 z-70 h-dvh w-72 bg-secondary text-white shadow-xl transition-transform duration-300 ${
                             isOpen ? 'translate-x-0' : 'translate-x-full'
                         }`
                     }

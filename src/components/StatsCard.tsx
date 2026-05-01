@@ -22,7 +22,7 @@ function StatsCard({ icon, title, value, unit }: StatsCardProps) {
                     <span>{formattedValue}</span>
                     {unit ? <span className="text-sm font-semibold opacity-90">{unit}</span> : null}
                 </p>
-                <p className="font-semibold sm:text-base text-sm">{title}</p>
+                <p className="font-semibold sm:text-base text-sm text-gray-300">{title}</p>
             </div>
         </>
     )

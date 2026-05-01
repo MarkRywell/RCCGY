@@ -1,21 +1,50 @@
-import BannerImage from '../assets/images/banner.jpg';
+
 import LaborDay from '../assets/images/events/labor-day.jpg';
 import StatsCard from '../components/StatsCard';
+import ImageCarousel from '../components/ImageCarousel';
 import { FaPersonRunning } from "react-icons/fa6";
 import { IoIosPeople } from "react-icons/io";
 import { LiaCalendarDaySolid } from "react-icons/lia";
 
 
 function Home() {
+  const aboutImages = [
+    {
+      src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1777566898/rccgy/group_ukjhwv.jpg",
+      alt: "Community",
+    },
+    {
+      src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1777604050/rccgy/girls_wmlluk.jpg",
+      alt: "Girls",
+    },
+    {
+      src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1777604050/rccgy/party_run_jib1eu.jpg",
+      alt: "KICKOFF RUN 2026",
+    },
+    {
+      src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1777604050/rccgy/party-run1_iozglb.jpg",
+      alt: "KICKOFF RUN 2026",
+    },
+    {
+      src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1777604286/rccgy/party-run2_jeqzmh.jpg",
+      alt: "KICKOFF RUN 2026",
+    },
+    {
+      src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1777604362/rccgy/run_xqffbt.jpg",
+      alt: "People Running",
+    }
+  ];
+
   return (
     <>
       <div className="min-h-screen w-full flex flex-col">
         <div className="relative h-screen xl:h-screen w-full">
-          <img src={BannerImage} alt="RANNN Crew banner" className="absolute inset-0 h-full w-full object-cover" />
+          <img src="https://res.cloudinary.com/di8bd6f96/image/upload/v1777566897/rccgy/banner_sta52t.jpg" alt="RANNN Crew banner" className="absolute inset-0 h-full w-full object-cover" />
 
           {/* dark overlay */}
           <div className="absolute inset-0 bg-black/40" />
 
+          { /* content */}
           <div className='relative h-full z-10 flex flex-col sm:flex-row justify-between sm:items-center px-10 py-16 gap-5 sm:px-20 sm:py-10 sm:gap-5 xl:gap-40'>
             <div className='flex flex-col gap-4 text-white sm:flex-3 xl:justify-start xl:items-start'>
               <div>
@@ -31,7 +60,7 @@ function Home() {
                 href="https://docs.google.com/forms/d/e/1FAIpQLSe4EMt3eUE7S50xB0X57kfmOndxFNcy0HVOppbhKCowJdkcQg/viewform"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block w-fit bg-secondary text-black font-bold px-4 py-2 rounded-md mt-2"
+                className="inline-block w-fit bg-secondary text-black font-bold px-4 py-2 rounded-md mt-2 transition-all duration-200 hover:scale-105 hover:text-white"
               >
                 Join Our Club
               </a>
@@ -42,10 +71,22 @@ function Home() {
             </div>
           </div>
         </div>
-        <div className='w-full bg-gray-800 flex items-center justify-center px-10 sm:px-20 py-5'>
+
+        {/* stats section */}
+        <div className='w-full bg-dark flex items-center justify-center px-10 sm:px-20 py-10'>
           <StatsCard icon={<IoIosPeople />} title="ACTIVE RUNNERS" value={388} unit="+" />
           <StatsCard icon={<LiaCalendarDaySolid />} title="RUNNING EVENTS" value={3} unit="/wk" />
           <StatsCard icon={<FaPersonRunning />} title="WEEKLY KILOMETERS RUN" value={30} unit="km" />
+        </div>
+
+        { /* about us section */}
+        <div className='w-full bg-gray-800 flex flex-col px-10 sm:px-20 py-10 gap-5 text-white'>
+          <h3 className='text-left font-bold text-primary'>ABOUT US</h3>
+          <h1 className='text-2xl sm:text-3xl font-bold'>WELCOME TO RANNN CREW CGY!</h1>
+          <p>Welcome to our community! We are dedicated to fostering a supportive and energetic environment for runners of all levels. Join us and be part of our growing family.</p>
+          
+          { /* images */}
+          <ImageCarousel images={aboutImages} intervalMs={3500} />
         </div>
       </div>
     </>

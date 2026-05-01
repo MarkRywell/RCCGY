@@ -22,6 +22,7 @@
   --font-serif: "Gothic A1", serif, ui-serif, system-ui;
 
   /* Breakpoints */
+  --breakpoint-xs: 425px;
   --breakpoint-sm: 600px;
   --breakpoint-md: 768px;
   --breakpoint-lg: 992px;

@@ -17,6 +17,7 @@ function ImageCarousel({ images, intervalMs = 3500, className }: ImageCarouselPr
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
   const hasReducedMotion = useMemo(() => {
     if (typeof window === "undefined") return false;
@@ -30,18 +31,48 @@ function ImageCarousel({ images, intervalMs = 3500, className }: ImageCarouselPr
     const child = container.children.item(index) as HTMLElement | null;
     if (!child) return;
 
-    child.scrollIntoView({
+    // IMPORTANT:
+    // Avoid `element.scrollIntoView()` here because it can scroll the entire page
+    // to make the carousel visible (which causes the Home page to jump down).
+    // We only want to scroll the carousel container horizontally.
+    container.scrollTo({
+      left: child.offsetLeft,
       behavior: hasReducedMotion ? "auto" : "smooth",
-      inline: "start",
-      block: "nearest",
     });
   };
+
+  // Track visibility so autoplay doesn't run while the user is still reading other sections.
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    // If IntersectionObserver isn't available, default to visible so existing behavior works.
+    if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
+      setIsVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        setIsVisible(Boolean(entry?.isIntersecting));
+      },
+      {
+        // Consider it visible when at least 25% of the carousel is in the viewport.
+        threshold: 0.25,
+      }
+    );
+
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, []);
 
   // Autoplay
   useEffect(() => {
     if (!images.length) return;
     if (!intervalMs || intervalMs <= 0) return;
     if (isPaused) return;
+    if (!isVisible) return;
 
     const id = window.setInterval(() => {
       setActiveIndex((prev) => {
@@ -52,7 +83,7 @@ function ImageCarousel({ images, intervalMs = 3500, className }: ImageCarouselPr
     }, intervalMs);
 
     return () => window.clearInterval(id);
-  }, [images.length, intervalMs, isPaused, hasReducedMotion]);
+  }, [images.length, intervalMs, isPaused, isVisible, hasReducedMotion]);
 
   if (!images.length) return null;
 

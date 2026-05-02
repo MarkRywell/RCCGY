@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 
 import Header from './layout/Header.tsx';
@@ -14,9 +14,22 @@ const Contact = lazy(() => import('./pages/Contact'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
 function App() {
+  const location = useLocation();
   const [hideHeader, setHideHeader] = useState(false);
   const lastScrollYRef = useRef(0);
   const tickingRef = useRef(false);
+
+  useEffect(() => {
+    const titles: Record<string, string> = {
+      '/': 'Home | RCCGY',
+      '/events': 'Events | RCCGY',
+      '/partners': 'Partners | RCCGY',
+      '/about': 'About | RCCGY',
+      '/contact': 'Contact | RCCGY',
+    };
+
+    document.title = titles[location.pathname] ?? 'Page Not Found | RCCGY';
+  }, [location.pathname]);
 
   useEffect(() => {
     lastScrollYRef.current = window.scrollY;

@@ -11,6 +11,16 @@
   }
 }
 
+@keyframes partner-scroll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 @theme {
   /* Colors */
   --color-primary: #ff3600;

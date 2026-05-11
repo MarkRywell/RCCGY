@@ -33,20 +33,100 @@ const globalPartners: PartnerLogo[] = [
   },
 ];
 
+const localPartners: PartnerLogo[] = [
+  {
+    src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1778418299/rccgy/sponsors/fliq-athletics_whpcsd.jpg",
+    alt: "Fliq Athletics",
+    href: "https://www.fliqathletics.com/",
+  },
+  {
+    src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1778418300/rccgy/sponsors/lift-athletics_dznab9.jpg",
+    alt: "Lift Athletics",
+    href: "https://liftathleticscdo.com/"
+  },
+  {
+    src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1778418300/rccgy/sponsors/phyx_xteaka.jpg",
+    alt: "Phyx Rehab Physiotherapy Services",
+    href: "https://www.facebook.com/phyxrehab"
+  },
+  {
+    src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1778418299/rccgy/sponsors/aid-station_o1gnmn.jpg",
+    alt: "Aid Station",
+    href: "https://www.facebook.com/profile.php?id=61573099223787"
+  },
+  {
+    src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1778418301/rccgy/sponsors/ora_qkgead.jpg",
+    alt: "Ora Wellness and Recovery",
+    href: "https://www.facebook.com/ora.cgy"
+  },
+  {
+    src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1778418299/rccgy/sponsors/analog-grit_cltajr.jpg",
+    alt: "Analog Grit",
+    href: "https://www.facebook.com/analoggrit"
+  },
+  {
+    src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1778418301/rccgy/sponsors/salakol_jv3dl6.jpg",
+    alt: "Salakolens",
+    href: "https://www.facebook.com/salakolens"
+  },
+  {
+    src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1778418300/rccgy/sponsors/Purp_mhvboq.jpg",
+    alt: "Purp Premium Shoe Care",
+    href: "https://www.facebook.com/purppremiumshoecare"
+  },
+  {
+    src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1778418299/rccgy/sponsors/devils-empanada_hqzflj.jpg",
+    alt: "Devil's Empanada",
+    href: "https://www.facebook.com/Yugybalageer"
+  },
+  {
+    src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1778418301/rccgy/sponsors/stibs-house_zodl2q.jpg",
+    alt: "Stib's House",
+    href: "https://www.facebook.com/Stibshousecdo"
+  },
+  {
+    src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1778418300/rccgy/sponsors/nenecitas_vuomma.jpg",
+    alt: "Nenecitas Sorbetes",
+    href: "https://www.facebook.com/TheFilipinoIceCream"
+  },
+  {
+    src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1778418300/rccgy/sponsors/flr_vdbq4e.jpg",
+    alt: "FLTR. Coffee",
+    href: "https://www.facebook.com/fltrcoffeeclub"
+  },
+  {
+    src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1778418301/rccgy/sponsors/SRI_s62n5x.jpg",
+    alt: "SRI Events",
+    href: "https://www.facebook.com/profile.php?id=61570376210089"
+  },
+  {
+    src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1778418299/rccgy/sponsors/Amlan_wspfoa.jpg",
+    alt: "AMLAN Purified Water",
+    href: "https://www.facebook.com/amlanph"
+  },
+  {
+    src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1778418300/rccgy/sponsors/roda_vcljpb.jpg",
+    alt: "Roda Fastfood",
+    href: "https://www.facebook.com/RodaFastfood"
+  },
+]
+
 function Partners() {
   return (
     <>
-      <div className="h-screen w-full flex flex-col items-center justify-start p-5 sm:p-10 bg-gray-800 text-white">
+      <div className="min-h-screen w-full flex flex-col items-center justify-start p-5 sm:p-10 bg-gray-800 text-white">
         <h1 className="text-4xl font-bold mb-10">OUR PARTNERS</h1>
 
-        <div className="w-full">
+        <div className="w-full my-10">
           <h2 className="text-2xl font-bold mb-10 text-center">GLOBAL PARTNERS</h2>
 
           <PartnerCarousel partners={globalPartners} />
         </div>
 
-        <div>
-          <h2 className="text-2xl font-bold mb-10">LOCAL PARTNERS</h2>
+        <div className="w-full my-10">
+          <h2 className="text-2xl font-bold mb-10 text-center">LOCAL PARTNERS</h2>
+
+          <PartnerCarousel partners={localPartners} variant="fill" />
         </div>
     
       </div>

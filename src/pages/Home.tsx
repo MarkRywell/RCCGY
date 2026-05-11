@@ -1,5 +1,5 @@
 
-import LaborDay from '../assets/images/events/labor-day.jpg';
+// import LaborDay from '../assets/images/events/labor-day.jpg';
 import StatsCard from '../components/StatsCard';
 import ImageCarousel from '../components/ImageCarousel';
 import { FaPersonRunning } from "react-icons/fa6";
@@ -65,10 +65,10 @@ function Home() {
                 Join Our Club
               </a>
             </div>
-            <div className="w-full sm:flex-none sm:max-w-sm xl:max-w-md md:max-w-72 rounded-2xl overflow-hidden bg-black/30 p-4 text-white">
+            {/* <div className="w-full sm:flex-none sm:max-w-sm xl:max-w-md md:max-w-72 rounded-2xl overflow-hidden bg-black/30 p-4 text-white">
               <p className="inline-flex items-center w-fit bg-primary font-bold px-2 py-2 rounded-t-md mb-0.5 text-black">NEW EVENT</p>
               <img src={LaborDay} alt="Time Trial Event" className="block w-full xs:h-70 sm:h-full rounded-tr-md rounded-br-md rounded-bl-md object-cover"/>
-            </div>
+            </div> */}
           </div>
         </div>
 

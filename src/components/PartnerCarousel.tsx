@@ -1,19 +1,5 @@
-export type PartnerLogo = {
-  src: string;
-  alt: string;
-  href: string;
-};
+import type { PartnerCarouselProps } from "../types/partners";
 
-type PartnerCarouselProps = {
-  partners: PartnerLogo[];
-  className?: string;
-  /**
-   * Choose how logos are displayed inside each item:
-   * - "fit" (default): padded box with white background and object-contain
-   * - "fill": edge-to-edge with no background, object-cover
-   */
-  variant?: "fit" | "fill";
-};
 
 function PartnerCarousel({ partners, className, variant = "fit" }: PartnerCarouselProps) {
   if (!partners.length) return null;

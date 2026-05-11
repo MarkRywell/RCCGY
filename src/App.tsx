@@ -12,6 +12,7 @@ const Partners = lazy(() => import('./pages/Partners'));
 const About = lazy(() => import('./pages/About'));
 const Contact = lazy(() => import('./pages/Contact'));
 const NotFound = lazy(() => import('./pages/NotFound'));
+const MemberProfile = lazy(() => import('./pages/MemberProfile'));
 
 function App() {
   const location = useLocation();
@@ -76,6 +77,7 @@ function App() {
             <Route path="/partners" element={<Partners />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/member/:id" element={<MemberProfile />} />
 
             {/* Fallback route */}
             <Route path="*" element={<NotFound />} />

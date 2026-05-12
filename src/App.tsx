@@ -29,7 +29,13 @@ function App() {
       '/contact': 'Contact | RCCGY',
     };
 
-    document.title = titles[location.pathname] ?? 'Page Not Found | RCCGY';
+    const isMemberRoute = location.pathname.startsWith('/member/');
+
+    const title = isMemberRoute
+      ? 'Member Profile | RCCGY'
+      : (titles[location.pathname] ?? 'Page Not Found | RCCGY');
+
+    document.title = title;
   }, [location.pathname]);
 
   useEffect(() => {
@@ -77,7 +83,7 @@ function App() {
             <Route path="/partners" element={<Partners />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/member/:id" element={<MemberProfile />} />
+            <Route path="/member/:slug" element={<MemberProfile />} />
 
             {/* Fallback route */}
             <Route path="*" element={<NotFound />} />

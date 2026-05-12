@@ -17,7 +17,7 @@ function Loader() {
 
   return (
     <>
-      <div className="h-screen w-full flex items-center justify-center pb-20">
+      <div className="h-screen w-full bg-gray-800 flex items-center justify-center pb-20">
         {View}
       </div>  
     </>

@@ -46,7 +46,7 @@ function About() {
               <h1 className="text-2xl font-bold my-5 text-start">THE MOVEMENT</h1>
               <p>Today, RCCGY is a synchronized movement. We have transformed the pavement into a stage for excellence, bringing together athletes, dreamers, and partners. From the first light of dawn to the city's night glow, our presence is felt across the city.</p>
             </div>
-            <img src="https://res.cloudinary.com/di8bd6f96/image/upload/v1777606832/rccgy/running_d3ueam.jpg" alt="Runner" className="w-full h-full md:block md:w-2/4 lg:w-1/3 md:h-1/3 md:object-cover rounded-lg mb-5" />
+            <img src="https://res.cloudinary.com/di8bd6f96/image/upload/v1777606832/rccgy/running_d3ueam.jpg" alt="Runner" className="w-full h-full hidden md:block md:w-2/4 lg:w-1/3 md:h-1/3 md:object-cover rounded-lg mb-5" />
           </div>
 
         </div>

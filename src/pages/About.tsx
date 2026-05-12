@@ -14,6 +14,17 @@ function About() {
             <h1 className="text-4xl font-bold">ABOUT US</h1>
           </div>
         </div>
+
+        <div className="w-full h-full flex flex-col justify-center items-center bg-gray-800 text-white py-10 px-5 sm:px-10 xl:px-30">
+          <div className="w-full flex">
+            <img src="https://res.cloudinary.com/di8bd6f96/image/upload/v1778574438/rccgy/banner_bwmkzd.jpg" alt="Banner" className="w-1/2 h-full object-cover" />
+            <div className="w-1/2 flex flex-col gap-5 p-10">
+              <p>WELCOME TO RUNCLUB:</p>
+              <h1>RANNN CREW CGY</h1>
+            </div>
+          </div>
+
+        </div>
       </div>
     </>
   );

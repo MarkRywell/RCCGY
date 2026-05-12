@@ -25,6 +25,35 @@ export const api = {
 
         return data as Member;
     },
+    updateProfilePicture: async (memberId: number, imageUrl: string) => {
+        const { data, error } = await supabase
+            .from('members')
+            .update({ profile_picture_url: imageUrl })
+            .eq('id', memberId);
+
+        if (error) {
+            console.error('Error updating profile picture:', error);
+            return null;
+        }
+
+        return data;
+    },
+    getMembers: async (role?: string): Promise<Member[]> => {
+        let query = supabase.from('members').select('*');
+
+        if (role) {
+            query = query.eq('role', role);
+        }
+
+        const { data, error } = await query;
+
+        if (error) {
+            console.error('Error fetching members:', error);
+            return [];
+        }
+
+        return data as Member[];
+    }
 };
 
 export default api;

@@ -2,7 +2,7 @@
 function EventCard ({ image, title, location }: { image: string; title: string; location: string }) {
     return (
         <>
-        <div className="relative w-full min-h-40 max-h-40 xl:max-h-60 rounded-xl overflow-hidden flex">
+        <div className="relative w-full min-h-40 max-h-40 xl:max-h-60 rounded-xl overflow-hidden flex animate-hero-enter">
             <div className="absolute top-0 left-0 w-2/4 sm:w-1/3 h-full flex flex-col gap-2 bg-dark [clip-path:polygon(0_0,75%_0,100%_50%,75%_100%,0_100%)] p-4 xl:p-10 justify-center text-white font-mono">
                 <h2 className="text-base xs:text-lg lg:text-2xl font-bold">{title}</h2>
                 <div className="flex gap-1 items-center">

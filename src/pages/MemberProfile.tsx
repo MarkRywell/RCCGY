@@ -109,7 +109,7 @@ function MemberProfile() {
                             <span className="text-2xl leading-none">⋮</span>
                         </button>
                         {isMenuOpen && (
-                            <div className="absolute right-0 mt-2 w-48 rounded-lg border border-gray-600 bg-gray-700 shadow-lg">
+                            <div className="absolute right-0 mt-2 w-48 rounded-lg border border-gray-600 bg-gray-700 shadow-lg z-10">
                                 <button
                                     type="button"
                                     className="w-full px-4 py-2 text-left hover:bg-gray-600"
@@ -128,13 +128,13 @@ function MemberProfile() {
                 <div className="min-h-52 w-full flex flex-col items-center justify-center p-5 gap-5">
                     <img
                         src={profileImage}
-                        className="w-52 h-52 object-cover rounded-full"
+                        className="w-52 h-52 object-cover rounded-full animate-element-enter-up"
                         alt={`${name} profile`}
                     />
 
-                    <h1 className="text-3xl font-bold">{name}</h1>
-                    <h2 className="text-xl text-secondary font-semibold">{role.toUpperCase()}</h2>
-                    <div className="flex flex-col gap-2 w-full px-5 md:w-1/2 lg:w-1/3">
+                    <h1 className="text-3xl font-bold animate-hero-enter">{name}</h1>
+                    <h2 className="text-xl text-secondary font-semibold animate-hero-enter">{role.toUpperCase()}</h2>
+                    <div className="flex flex-col gap-2 w-full px-5 md:w-1/2 lg:w-1/3 animate-hero-enter">
                         <div className="text-lg flex justify-between items-center">
                             <p>Phone</p>
                             <p>{phone || "N/A"}</p>
@@ -146,7 +146,7 @@ function MemberProfile() {
                     </div>
                 </div>
 
-                <div className="w-full mx-auto p-6 flex flex-col gap-4">
+                <div className="w-full mx-auto p-6 flex flex-col gap-4 animate-hero-enter-right">
                     <div>
                         <h3 className="text-2xl font-semibold mb-4">Personal Records</h3>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

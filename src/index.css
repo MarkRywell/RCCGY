@@ -55,6 +55,22 @@
   animation: hero-fade-in-right 0.6s ease-out both;
 }
 
+@keyframes element-fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-element-enter-up {
+  animation: element-fade-in-up 0.6s ease-out both;
+}
+
+
 @theme {
   /* Colors */
   --color-primary: #ff3600;

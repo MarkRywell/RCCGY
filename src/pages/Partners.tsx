@@ -1,5 +1,5 @@
 import PartnerCarousel from "../components/PartnerCarousel";
-import { globalPartners, localPartners } from "../assets/data/partners";
+import { globalPartners, localPartners } from "../assets/data/photos";
 
 
 function Partners() {

@@ -111,3 +111,38 @@ export const localPartners: PartnerLogo[] = [
     href: "https://www.facebook.com/RodaFastfood"
   },
 ]
+
+export const homeImages = [
+    {
+      src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1777566898/rccgy/group_ukjhwv.jpg",
+      alt: "Community",
+    },
+    {
+      src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1777604050/rccgy/girls_wmlluk.jpg",
+      alt: "Girls",
+    },
+    {
+      src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1777604050/rccgy/party_run_jib1eu.jpg",
+      alt: "KICKOFF RUN 2026",
+    },
+    {
+      src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1777604050/rccgy/party-run1_iozglb.jpg",
+      alt: "KICKOFF RUN 2026",
+    },
+    {
+      src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1777604286/rccgy/party-run2_jeqzmh.jpg",
+      alt: "KICKOFF RUN 2026",
+    },
+    {
+      src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1778574437/rccgy/cheer_wegmmx.jpg",
+      alt: "Cheering",
+    },
+    {
+      src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1777606832/rccgy/running3_tjdlso.jpg",
+      alt: "People Running",
+    },
+    {
+      src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1778586483/rccgy/running5_playkt.jpg",
+      alt: "People Running",
+    }
+];

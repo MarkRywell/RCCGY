@@ -5,35 +5,11 @@ import ImageCarousel from '../components/ImageCarousel';
 import { FaPersonRunning } from "react-icons/fa6";
 import { IoIosPeople } from "react-icons/io";
 import { LiaCalendarDaySolid } from "react-icons/lia";
+import { homeImages } from '../assets/data/photos';
 
 
 function Home() {
-  const aboutImages = [
-    {
-      src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1777566898/rccgy/group_ukjhwv.jpg",
-      alt: "Community",
-    },
-    {
-      src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1777604050/rccgy/girls_wmlluk.jpg",
-      alt: "Girls",
-    },
-    {
-      src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1777604050/rccgy/party_run_jib1eu.jpg",
-      alt: "KICKOFF RUN 2026",
-    },
-    {
-      src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1777604050/rccgy/party-run1_iozglb.jpg",
-      alt: "KICKOFF RUN 2026",
-    },
-    {
-      src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1777604286/rccgy/party-run2_jeqzmh.jpg",
-      alt: "KICKOFF RUN 2026",
-    },
-    {
-      src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1777606832/rccgy/running3_tjdlso.jpg",
-      alt: "People Running",
-    }
-  ];
+  
 
   return (
     <>
@@ -74,9 +50,9 @@ function Home() {
 
         {/* stats section */}
         <div className='w-full bg-dark flex items-center justify-center px-10 sm:px-20 py-10'>
-          <StatsCard icon={<IoIosPeople />} title="ACTIVE RUNNERS" value={388} unit="+" />
-          <StatsCard icon={<LiaCalendarDaySolid />} title="RUNNING EVENTS" value={3} unit="/wk" />
-          <StatsCard icon={<FaPersonRunning />} title="WEEKLY KILOMETERS RUN" value={30} unit="km" />
+          <StatsCard icon={<IoIosPeople />} title="ACTIVE RUNNERS" value={388} unit="+" animate />
+          <StatsCard icon={<LiaCalendarDaySolid />} title="RUNNING EVENTS" value={3} unit="/wk" animate />
+          <StatsCard icon={<FaPersonRunning />} title="WEEKLY KILOMETERS RUN" value={30} unit="km" animate />
         </div>
 
         { /* about us section */}
@@ -86,7 +62,7 @@ function Home() {
           <p>Welcome to our community! We are dedicated to fostering a supportive and energetic environment for runners of all levels. Join us and be part of our growing family.</p>
           
           { /* images */}
-          <ImageCarousel images={aboutImages} intervalMs={3500} />
+          <ImageCarousel images={homeImages} intervalMs={3500} />
         </div>
       </div>
     </>

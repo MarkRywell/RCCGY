@@ -1,4 +1,5 @@
 
+import { useEffect, useRef, useState } from "react";
 // import LaborDay from '../assets/images/events/labor-day.jpg';
 import StatsCard from '../components/StatsCard';
 import ImageCarousel from '../components/ImageCarousel';
@@ -9,7 +10,29 @@ import { homeImages } from '../assets/data/photos';
 
 
 function Home() {
-  
+  const aboutSectionRef = useRef<HTMLDivElement | null>(null);
+  const [aboutVisible, setAboutVisible] = useState(false);
+
+  useEffect(() => {
+    const target = aboutSectionRef.current;
+    if (!target) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setAboutVisible(true);
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.25 }
+    );
+
+    observer.observe(target);
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <>
@@ -22,7 +45,7 @@ function Home() {
 
           { /* content */}
           <div className='relative h-full z-10 flex flex-col sm:flex-row justify-between sm:items-center px-10 py-10 gap-5 sm:px-20 sm:py-10 sm:gap-5 xl:gap-40'>
-            <div className='flex flex-col gap-4 text-white sm:flex-3 xl:justify-start xl:items-start'>
+            <div className='flex flex-col gap-4 text-white sm:flex-3 xl:justify-start xl:items-start animate-hero-enter'>
               <div>
                 <h1 className="text-3xl lg:text-5xl font-bold">
                   Rannn <span className="text-secondary">Crew</span> CGY
@@ -56,13 +79,20 @@ function Home() {
         </div>
 
         { /* about us section */}
-        <div className='w-full bg-gray-800 flex flex-col px-10 sm:px-20 py-10 gap-5 text-white'>
-          <h3 className='text-left font-bold text-primary'>ABOUT US</h3>
-          <h1 className='text-2xl sm:text-3xl font-bold'>WELCOME TO RANNN CREW CGY!</h1>
-          <p>Welcome to our community! We are dedicated to fostering a supportive and energetic environment for runners of all levels. Join us and be part of our growing family.</p>
+        <div
+          ref={aboutSectionRef}
+          className='w-full bg-gray-800 flex flex-col px-10 sm:px-20 py-10 gap-5 text-white'
+        >
+          <div className={`${aboutVisible ? 'animate-hero-enter' : 'opacity-0 translate-x-6'}`}>
+            <h3 className='text-left font-bold text-primary'>ABOUT US</h3>
+            <h1 className='text-2xl sm:text-3xl font-bold'>WELCOME TO RANNN CREW CGY!</h1>
+            <p>Welcome to our community! We are dedicated to fostering a supportive and energetic environment for runners of all levels. Join us and be part of our growing family.</p>
+          </div>
           
           { /* images */}
-          <ImageCarousel images={homeImages} intervalMs={3500} />
+          <div className={`${aboutVisible ? 'animate-hero-enter-right' : 'opacity-0 -translate-x-6 sm:translate-x-6'}`}>
+            <ImageCarousel images={homeImages} intervalMs={3500} />
+          </div>
         </div>
       </div>
     </>

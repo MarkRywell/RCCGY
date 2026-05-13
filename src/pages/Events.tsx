@@ -14,7 +14,7 @@ function Events() {
 
           { /* content */ }
           <div className="relative h-full z-10 flex flex-col items-center justify-center text-center text-white">
-            <h1 className="text-4xl font-bold">OUR EVENTS</h1>
+            <h1 className="text-4xl font-bold font-mono">OUR EVENTS</h1>
           </div>
         </div>
 

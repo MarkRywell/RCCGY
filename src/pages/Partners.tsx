@@ -16,7 +16,7 @@ function Partners() {
 
           { /* content */ }
           <div className="relative h-full z-10 flex flex-col items-center justify-center text-center text-white">
-            <h1 className="text-4xl font-bold mb-10">OUR PARTNERS</h1>
+            <h1 className="text-4xl font-bold mb-10 font-mono">OUR PARTNERS</h1>
           </div>
         </div>
 

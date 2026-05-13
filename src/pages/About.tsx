@@ -55,7 +55,7 @@ function About() {
                 <div className="flex flex-col gap-10 animate-hero-enter-right items-center md:w-2/5">
                   <img src="https://res.cloudinary.com/di8bd6f96/image/upload/v1778658412/rccgy/shoes_w65yx0.jpg" alt="Shoes" className="hidden md:block w-full h-full object-cover rounded-lg" />
                   <div className="w-full h-1/2 flex flex-col justify-center px-5 xl:px-15">
-                    <div className="w-full flex flex-row justify-center items-center md:items-end gap-2 xl:gap-5 mb-5">
+                    <div className="w-full flex flex-row justify-start items-center md:items-end gap-2 xl:gap-5 mb-5 font-mono">
                       <h1 className="text-5xl lg:text-7xl xl:text-8xl font-bold text-secondary">300+</h1>
                       <p className="md:text-sm xl:text-2xl font-bold">Members and Growing</p>
                     </div>

@@ -5,6 +5,7 @@ import Header from './layout/Header.tsx';
 import Nav from './layout/Nav.tsx';
 import Footer from './layout/Footer.tsx';
 import Loader from './components/Loader.tsx';
+import AdminGuard from './components/AdminGuard.tsx';
 
 const Home = lazy(() => import('./pages/Home'));
 const Events = lazy(() => import('./pages/Events'));
@@ -102,7 +103,14 @@ function App() {
           />
 
           {/* Admin shell (no Header/Nav/Footer) */}
-          <Route path="/admin" element={<Admin />} />
+          <Route
+            path="/admin"
+            element={(
+              <AdminGuard>
+                <Admin />
+              </AdminGuard>
+            )}
+          />
         </Routes>
       </Suspense>
     </>

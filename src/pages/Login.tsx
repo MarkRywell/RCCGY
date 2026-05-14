@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { HiOutlineMail, HiOutlineLockClosed } from 'react-icons/hi'
 import api from '../lib/supabase'
 import Logo from '../assets/logos/logo-bg.png'
@@ -36,6 +37,7 @@ function FloatingIconInput({ type, name, label, icon, value, onChange }: Floatin
 }
 
 function Login() {
+    const navigate = useNavigate()
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [loading, setLoading] = useState(false)
@@ -52,6 +54,13 @@ function Login() {
             setError(error.message ?? 'Login failed')
         } else {
             console.log('Logged in session:', data?.session)
+            const userId = data?.session?.user?.id
+            if (userId) {
+                const member = await api.getMemberByUserId(userId)
+                if (member?.role === 'admin') {
+                    navigate('/admin')
+                }
+            }
         }
 
         setLoading(false)

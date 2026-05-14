@@ -4,9 +4,10 @@ import type { AdminTabKey } from '../layout/AdminSidebar'
 type AdminTopbarProps = {
   activeTab: AdminTabKey
   onOpenSidebar: () => void
+  onOpenInviteUser?: () => void
 }
 
-function AdminTopbar({ activeTab, onOpenSidebar }: AdminTopbarProps) {
+function AdminTopbar({ activeTab, onOpenSidebar, onOpenInviteUser }: AdminTopbarProps) {
   const tabLabel = activeTab === 'users' ? 'User Management' : 'Event Management'
 
   return (
@@ -26,7 +27,13 @@ function AdminTopbar({ activeTab, onOpenSidebar }: AdminTopbarProps) {
       </div>
 
       <div className="flex items-center gap-2">
-        <button className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white hover:opacity-90 transition">
+        <button
+          className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white hover:opacity-90 transition disabled:opacity-60"
+          onClick={() => {
+            if (activeTab === 'users') onOpenInviteUser?.()
+          }}
+          disabled={activeTab !== 'users'}
+        >
           <HiOutlinePlus className="h-4 w-4" />
           {activeTab === 'users' ? 'New User' : 'New Event'}
         </button>

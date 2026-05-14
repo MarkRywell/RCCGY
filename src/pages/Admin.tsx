@@ -5,6 +5,7 @@ import type { Member } from '../types/members'
 import type { Event } from '../types/events'
 import AdminSidebar, { type AdminTabKey } from '../layout/AdminSidebar'
 import AdminTopbar from '../components/AdminTopbar'
+import InviteUserModal from '../components/InviteUserModal'
 import AdminUsersPanel from '../components/AdminUsersPanel'
 import AdminEventsPanel from '../components/AdminEventsPanel'
 
@@ -24,18 +25,24 @@ function Admin() {
   const [eventSearch, setEventSearch] = useState('')
   const [loadingEvents, setLoadingEvents] = useState(false)
 
+  const [inviteModalOpen, setInviteModalOpen] = useState(false)
+
+  const refetchUsers = async (opts?: { search?: string; role?: 'admin' | 'member' }) => {
+    setLoadingUsers(true)
+    const data = await api.getMembers({
+      search: opts?.search ?? userSearch,
+      role: opts?.role ?? (userRoleFilter ? (userRoleFilter as 'admin' | 'member') : undefined),
+    })
+    setUsers(data)
+    setLoadingUsers(false)
+  }
+
   // Fetch users
   useEffect(() => {
-    const fetchUsers = async () => {
-      setLoadingUsers(true)
-      const data = await api.getMembers({
-        search: userSearch,
-        role: userRoleFilter ? (userRoleFilter as 'admin' | 'member') : undefined,
-      })
-      setUsers(data)
-      setLoadingUsers(false)
+    const run = async () => {
+      await refetchUsers()
     }
-    fetchUsers()
+    void run()
   }, [userSearch, userRoleFilter])
 
   // Fetch events
@@ -72,7 +79,11 @@ function Admin() {
 
       {/* Main content */}
       <div className="flex-1 flex flex-col min-h-screen sm:ml-64">
-        <AdminTopbar activeTab={activeTab} onOpenSidebar={() => setSidebarOpen(true)} />
+        <AdminTopbar
+          activeTab={activeTab}
+          onOpenSidebar={() => setSidebarOpen(true)}
+          onOpenInviteUser={() => setInviteModalOpen(true)}
+        />
 
         <main className="flex-1 px-4 sm:px-6 lg:px-10 py-6">
           {activeTab === 'users' ? (
@@ -93,6 +104,12 @@ function Admin() {
             />
           )}
         </main>
+
+        <InviteUserModal
+          open={inviteModalOpen}
+          onClose={() => setInviteModalOpen(false)}
+          onSuccess={() => refetchUsers()}
+        />
       </div>
     </div>
   )

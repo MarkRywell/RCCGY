@@ -71,7 +71,7 @@ function Nav() {
                 to="/login"
                 className={({ isActive }) =>
                     [
-                        'hidden sm:inline-flex items-center gap-2 font-bold text-lg transition-all duration-200 hover:text-primary hover:scale-105',
+                        'hidden sm:inline-flex items-center gap-2 md:gap-1 lg:gap-2 md:pl-4 font-bold text-lg transition-all duration-200 hover:text-primary hover:scale-105',
                         isActive ? 'text-white' : '',
                     ].join(' ')
                 }

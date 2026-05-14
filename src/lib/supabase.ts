@@ -110,6 +110,21 @@ export const api = {
     return { data: (data as Member) ?? null, error }
   },
 
+  inviteMember: async (payload: { email: string; name: string; slug?: string }) => {
+    const { email, name, slug } = payload
+
+    const { data, error } = await supabase.functions.invoke('invite-member', {
+      body: { email, name, slug }
+    })
+
+    if (error) {
+      console.error('Error inviting member:', error)
+      return { data: null, error }
+    }
+
+    return { data, error: null }
+  },
+
   updateMember: async (id: string, payload: Partial<Member>) => {
     const { data, error } = await supabase
       .from('members')

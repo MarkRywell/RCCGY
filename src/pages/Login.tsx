@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from 'react'
 import { HiOutlineMail, HiOutlineLockClosed } from 'react-icons/hi'
+import api from '../lib/supabase'
 import Logo from '../assets/logos/logo-bg.png'
 
 type FloatingIconInputProps = {
@@ -37,6 +38,24 @@ function FloatingIconInput({ type, name, label, icon, value, onChange }: Floatin
 function Login() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState<string | null>(null)
+
+    const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
+        e.preventDefault()
+        if (loading) return
+        setError(null)
+        setLoading(true)
+
+        const { data, error } = await api.signInWithEmail(email.trim(), password)
+        if (error) {
+            setError(error.message ?? 'Login failed')
+        } else {
+            console.log('Logged in session:', data?.session)
+        }
+
+        setLoading(false)
+    }
 
     return (
         <>
@@ -46,7 +65,7 @@ function Login() {
                     <h1 className="text-3xl font-bold">Welcome to Runner</h1>
                     <p className="text-gray-400">Please log in to continue</p>
 
-                    <div className="flex w-full flex-col gap-4">
+                    <form className="flex w-full flex-col gap-4" onSubmit={handleSubmit}>
                         <FloatingIconInput
                             type="email"
                             name="email"
@@ -64,14 +83,23 @@ function Login() {
                             value={password}
                             onChange={setPassword}
                         />
-                    </div>
 
-                    <button
-                        type="button"
-                        className="w-full rounded-lg bg-secondary px-4 py-3 font-semibold text-white transition hover:bg-primary focus:outline-none focus:ring-2 focus:ring-orange-500/60"
-                    >
-                        Log In
-                    </button>
+                        {error && (
+                            <p className="text-sm text-red-400" role="alert" aria-live="polite">
+                                {error}
+                            </p>
+                        )}
+
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className={`w-full rounded-lg bg-secondary px-4 py-3 font-semibold text-white transition focus:outline-none focus:ring-2 focus:ring-orange-500/60 ${
+                                loading ? 'opacity-60 cursor-not-allowed' : 'hover:bg-primary'
+                            }`}
+                        >
+                            {loading ? 'Logging in...' : 'Log In'}
+                        </button>
+                    </form>
                 </div>
             </div>
         </>

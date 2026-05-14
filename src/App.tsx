@@ -14,6 +14,7 @@ const Contact = lazy(() => import('./pages/Contact'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const MemberProfile = lazy(() => import('./pages/MemberProfile'));
 const Login = lazy(() => import('./pages/Login'));
+const Admin = lazy(() => import('./pages/Admin'));
 
 
 function App() {
@@ -73,28 +74,37 @@ function App() {
 
   return (
     <>
-      <div className="min-h-dvh w-full overflow-x-hidden">
-        {/* Sticky stack: Header collapses, Nav stays visible */}
-        <div className="sticky top-0 z-50">
-          <Header hidden={hideHeader} />
-          <Nav />
-        </div>
-        <Suspense fallback={<Loader />}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/events" element={<Events />} />
-            <Route path="/partners" element={<Partners />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/member/:slug" element={<MemberProfile />} />
-            <Route path="/login" element={<Login />} />
+      <Suspense fallback={<Loader />}>
+        <Routes>
+          {/* Public shell */}
+          <Route
+            path="/*"
+            element={(
+              <div className="min-h-dvh w-full overflow-x-hidden">
+                <div className="sticky top-0 z-50">
+                  <Header hidden={hideHeader} />
+                  <Nav />
+                </div>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/events" element={<Events />} />
+                  <Route path="/partners" element={<Partners />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/member/:slug" element={<MemberProfile />} />
+                  <Route path="/login" element={<Login />} />
+                  {/* Fallback within public shell */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+                <Footer />
+              </div>
+            )}
+          />
 
-            {/* Fallback route */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Suspense>
-        <Footer />
-      </div>
+          {/* Admin shell (no Header/Nav/Footer) */}
+          <Route path="/admin" element={<Admin />} />
+        </Routes>
+      </Suspense>
     </>
   );
 }

@@ -36,7 +36,7 @@ function AdminEventsPanel({ events, search, setSearch, loading }: Props) {
           ) : (
             events.map((event) => (
               <div key={event.id} className="grid grid-cols-5 gap-2 px-4 py-3 text-sm items-center">
-                <span className="col-span-2 font-medium">{event.name}</span>
+                <span className="truncate col-span-2 font-medium">{event.name}</span>
                 <span className="text-white/80">{new Date(event.event_date).toLocaleDateString()}</span>
                 <span className="truncate text-white/80">{event.location ?? '—'}</span>
                 <div className="flex justify-end gap-2 text-xs">

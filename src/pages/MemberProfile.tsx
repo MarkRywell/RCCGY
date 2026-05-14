@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
-import Loader from "./Loader";
+import Loader from "../components/Loader";
 
 import api from "../lib/supabase";
 import { GenerateQRCode, type GenerateQRCodeRef } from "../lib/qrCode";

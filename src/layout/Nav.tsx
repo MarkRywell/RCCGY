@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
+import { HiUser } from 'react-icons/hi'
 import Logo from '../assets/logos/logo.jpg';
 
 const NAV_LINKS = [
@@ -7,7 +8,7 @@ const NAV_LINKS = [
     { href: '/events', label: 'EVENTS' },
     { href: '/partners', label: 'PARTNERS' },
     { href: '/about', label: 'ABOUT' },
-    { href: '/contact', label: 'CONTACT' },
+    { href: '/contact', label: 'CONTACT' }
 ]
 
 
@@ -64,6 +65,21 @@ function Nav() {
                     </li>
                 ))}
             </ul>
+            
+            {/* Desktop login link with NavLink-style hover/active */}
+            <NavLink
+                to="/login"
+                className={({ isActive }) =>
+                    [
+                        'hidden sm:inline-flex items-center gap-2 font-bold text-lg transition-all duration-200 hover:text-primary hover:scale-105',
+                        isActive ? 'text-white' : '',
+                    ].join(' ')
+                }
+                aria-label="Go to login"
+            >
+                <HiUser className="text-lg" aria-hidden="true" />
+                <span>LOGIN</span>
+            </NavLink>
 
             {/* Mobile burger */}
             <button
@@ -123,6 +139,7 @@ function Nav() {
                 >
                     <div className="flex items-center justify-between px-4 py-4 border-b border-white/10">
                         <span className="font-bold text-lg">Menu</span>
+                        
                         <button
                             type="button"
                             className="inline-flex items-center justify-center rounded-md p-2 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
@@ -157,6 +174,22 @@ function Nav() {
                                 </NavLink>
                             </li>
                         ))}
+                        <li className="px-2 pt-2">
+                            <NavLink
+                                to="/login"
+                                className={({ isActive }) =>
+                                    [
+                                        'flex items-center justify-start gap-2 rounded-md px-3 py-3 transition-colors hover:bg-white/10 hover:text-primary',
+                                        isActive ? 'text-primary' : '',
+                                    ].join(' ')
+                                }
+                                aria-label="Go to login"
+                                onClick={() => setIsOpen(false)}
+                            >
+                                <HiUser className="text-lg" aria-hidden="true" />
+                                <span>LOGIN</span>
+                            </NavLink>
+                        </li>
                     </ul>
                 </aside>
             </div>

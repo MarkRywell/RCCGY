@@ -219,6 +219,7 @@ serve(async (req: Request) => {
     const { error: insertError } =
       await adminSupabase.from("members").insert({
         user_id: data.user.id,
+        email,
         name,
         slug,
         role: "member",

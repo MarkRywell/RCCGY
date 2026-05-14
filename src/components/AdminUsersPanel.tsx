@@ -1,4 +1,5 @@
-import { HiOutlineSearch } from 'react-icons/hi'
+import { useEffect, useRef, useState } from 'react'
+import { HiOutlineDotsVertical, HiOutlineSearch } from 'react-icons/hi'
 import type { Member } from '../types/members'
 
 type Props = {
@@ -53,16 +54,78 @@ function AdminUsersPanel({ users, search, roleFilter, setSearch, setRoleFilter, 
                 <span className="col-span-2 font-medium">{user.name}</span>
                 <span className="truncate text-white/80">{user.email ?? '—'}</span>
                 <span className="uppercase text-xs font-semibold">{user.role}</span>
-                <div className="flex justify-end gap-2 text-xs">
-                  <button className="rounded-md border border-white/10 px-2 py-1 hover:bg-white/10">Edit</button>
-                  <button className="rounded-md border border-red-500/50 text-red-300 px-2 py-1 hover:bg-red-500/10">Delete</button>
-                </div>
+                <RowActions />
               </div>
             ))
           )}
         </div>
       </div>
     </section>
+  )
+}
+
+function RowActions() {
+  const [open, setOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    if (!open) return
+
+    const handleClick = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [open])
+
+  const close = () => setOpen(false)
+
+  return (
+    <div className="flex justify-end text-xs">
+      <div className="hidden md:flex gap-2">
+        <button type="button" className="rounded-md border border-white/10 px-2 py-1 hover:bg-white/10">Edit</button>
+        <button
+          type="button"
+          className="rounded-md border border-red-500/50 text-red-300 px-2 py-1 hover:bg-red-500/10"
+        >
+          Delete
+        </button>
+      </div>
+
+      <div className="relative md:hidden" ref={menuRef}>
+        <button
+          type="button"
+          aria-label="Open actions"
+          aria-expanded={open}
+          onClick={() => setOpen((prev) => !prev)}
+          className="rounded-md border border-white/10 px-2 py-1 hover:bg-white/10"
+        >
+          <HiOutlineDotsVertical className="h-4 w-4" />
+        </button>
+
+        {open && (
+          <div className="absolute right-0 z-20 mt-2 w-28 rounded-md border border-white/10 bg-gray-950 p-1 shadow-lg">
+            <button
+              type="button"
+              onClick={close}
+              className="w-full rounded-md px-3 py-2 text-left text-xs hover:bg-white/10"
+            >
+              Edit
+            </button>
+            <button
+              type="button"
+              onClick={close}
+              className="w-full rounded-md px-3 py-2 text-left text-xs text-red-300 hover:bg-red-500/10"
+            >
+              Delete
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
   )
 }
 

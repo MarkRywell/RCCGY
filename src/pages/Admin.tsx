@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import api from '../lib/supabase'
 import type { Member } from '../types/members'
 import type { Event } from '../types/events'
@@ -8,6 +9,7 @@ import AdminUsersPanel from '../components/AdminUsersPanel'
 import AdminEventsPanel from '../components/AdminEventsPanel'
 
 function Admin() {
+  const navigate = useNavigate()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [activeTab, setActiveTab] = useState<AdminTabKey>('users')
 
@@ -52,7 +54,10 @@ function Admin() {
       <AdminSidebar
         activeTab={activeTab}
         onTabChange={(tab) => { setActiveTab(tab); setSidebarOpen(false) }}
-        onLogout={() => api.signOut()}
+        onLogout={async () => {
+          await api.signOut()
+          navigate('/')
+        }}
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
       />

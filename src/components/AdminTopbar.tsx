@@ -21,7 +21,7 @@ function AdminTopbar({ activeTab, onOpenSidebar }: AdminTopbarProps) {
         </button>
         <div>
           <p className="text-xs text-white/60">Admin</p>
-          <h1 className="text-xl font-bold">{tabLabel}</h1>
+          <h1 className="sm:text-xl font-bold">{tabLabel}</h1>
         </div>
       </div>
 

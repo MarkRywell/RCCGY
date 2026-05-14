@@ -71,7 +71,7 @@ function Login() {
             <div className="min-h-screen w-full flex flex-col items-center justify-center lg:pb-20 bg-gray-800 px-4">
                 <div className="flex w-full max-w-sm md:max-w-md flex-col items-center gap-6 bg-dark text-white p-5 sm:p-6 rounded-lg shadow-xl shadow-white/15">
                     <img src={Logo} alt="Logo" className="w-32 mb-2 rounded-full" />
-                    <h1 className="text-3xl font-bold">Welcome to Runner</h1>
+                    <h1 className="text-3xl font-bold">Welcome Runner</h1>
                     <p className="text-gray-400">Please log in to continue</p>
 
                     <form className="flex w-full flex-col gap-4" onSubmit={handleSubmit}>

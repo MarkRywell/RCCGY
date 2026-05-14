@@ -53,6 +53,8 @@ function InviteUserModal({ open, onClose, onSuccess }: Props) {
       slug: slug || undefined,
     })
 
+    console.log("===================", inviteError)
+
     if (inviteError) {
       setError(inviteError.message ?? 'Failed to send invite')
       setSubmitting(false)

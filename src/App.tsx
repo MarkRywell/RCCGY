@@ -16,6 +16,7 @@ const NotFound = lazy(() => import('./pages/NotFound'));
 const MemberProfile = lazy(() => import('./pages/MemberProfile'));
 const Login = lazy(() => import('./pages/Login'));
 const Admin = lazy(() => import('./pages/Admin'));
+const SetPassword = lazy(() => import('./pages/SetPassword'));
 
 
 function App() {
@@ -31,7 +32,9 @@ function App() {
       '/partners': 'Partners | RCCGY',
       '/about': 'About | RCCGY',
       '/contact': 'Contact | RCCGY',
-      '/login': 'Login | RCCGY'
+      '/login': 'Login | RCCGY',
+      '/admin': 'Admin Dashboard | RCCGY',
+      '/set-password': 'Set Password | RCCGY',
     };
 
     const isMemberRoute = location.pathname.startsWith('/member/');
@@ -94,6 +97,7 @@ function App() {
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/member/:slug" element={<MemberProfile />} />
                   <Route path="/login" element={<Login />} />
+                  <Route path="/set-password" element={<SetPassword />} />
                   {/* Fallback within public shell */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>

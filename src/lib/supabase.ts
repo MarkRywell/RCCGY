@@ -113,13 +113,31 @@ export const api = {
   inviteMember: async (payload: { email: string; name: string; slug?: string }) => {
     const { email, name, slug } = payload
 
-    const { data, error } = await supabase.functions.invoke('invite-member', {
+    const data = await supabase.functions.invoke('invite-member', {
       body: { email, name, slug }
     })
 
-    if (error) {
-      console.error('Error inviting member:', error)
-      return { data: null, error }
+    if (data.error) {
+      let errorMessage = data.error.message
+
+      try {
+        const res = await data.response?.json()
+
+        if (res?.error) {
+          if (res.error.includes('Slug')) {
+            errorMessage = "Username is already taken. Please choose a different username"
+          } else {
+            errorMessage = res.error
+          }
+        }
+      } catch {
+        // ignore json parse errors
+      }
+
+      return {
+        data: null,
+        error: new Error(errorMessage)
+      }
     }
 
     return { data, error: null }

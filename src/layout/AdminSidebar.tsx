@@ -44,10 +44,12 @@ function AdminSidebar({ activeTab, onTabChange, onLogout, isOpen, onClose }: Adm
         <div className="h-px bg-white/10 my-2" />
         <SidebarItem
           icon={<HiOutlineCog className="h-5 w-5" />}
-          label="Settings"
-          disabled
-          onClick={() => {}}
+          label="Back to Home"
+          onClick={() => {
+            window.location.href = '/'
+          }}
         />
+        <div className="h-px bg-white/10 my-2" />
         <SidebarItem
           icon={<HiOutlineLogout className="h-5 w-5" />}
           label="Logout"

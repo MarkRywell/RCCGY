@@ -1,7 +1,7 @@
 
-const cloudName = import.meta.env.CLOUDINARY_CLOUD_NAME;
-const memberUploadPreset = import.meta.env.CLOUDINARY_MEMBER_UPLOAD_PRESET;
-const eventUploadPreset = import.meta.env.CLOUDINARY_EVENT_UPLOAD_PRESET;
+const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+const memberUploadPreset = import.meta.env.VITE_CLOUDINARY_MEMBER_UPLOAD_PRESET;
+const eventUploadPreset = import.meta.env.VITE_CLOUDINARY_EVENT_UPLOAD_PRESET;
 
 
 export default {
@@ -16,9 +16,9 @@ export default {
             body: formData
         });
 
-        const { secure_url } = await response.json();
+        const { secure_url, public_id } = await response.json();
 
-        return secure_url;
+        return { secure_url, public_id };
     },
 
     uploadEventImage: async (file: File) => {
@@ -32,8 +32,8 @@ export default {
             body: formData
         });
 
-        const { secure_url } = await response.json();
+        const { secure_url, public_id } = await response.json();
 
-        return secure_url;
-    }
+        return { secure_url, public_id };
+    },
 }

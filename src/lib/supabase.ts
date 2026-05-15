@@ -59,10 +59,13 @@ export const api = {
     return data as Member
   },
 
-  updateProfilePicture: async (memberId: number, imageUrl: string) => {
+  updateProfilePicture: async (
+    memberId: number,
+    payload: { profile_picture_url: string | null; profile_picture_public_id: string | null }
+  ) => {
     const { data, error } = await supabase
       .from('members')
-      .update({ profile_picture_url: imageUrl })
+      .update(payload)
       .eq('id', memberId)
 
     if (error) {
@@ -158,12 +161,18 @@ export const api = {
     return { data: (data as Member) ?? null, error }
   },
 
-  deleteMember: async (id: string) => {
-    const { error } = await supabase.from('members').delete().eq('id', id)
-    if (error) {
-      console.error('Error deleting member:', error)
-    }
-    return { error }
+  deleteMember: async (userId: string) => {
+    const { data, error } =
+      await supabase.functions.invoke(
+        "delete-member",
+        {
+          body: {
+            user_id: userId,
+          },
+        }
+      );
+
+    return { data, error };
   },
 
   signInWithEmail: async (email: string, password: string) => {
@@ -240,7 +249,30 @@ export const api = {
       console.error('Error deleting event:', error)
     }
     return { error }
-  }
+  },
+
+  uploadProfilePicture: async (
+    file: File,
+    memberId: string
+  ): Promise<{ secure_url: string; public_id: string; version: number }> => {
+    const formData = new FormData()
+
+    formData.append('file', file)
+    formData.append('memberId', memberId)
+
+    const { data, error } = await supabase.functions.invoke('upload-profile-picture', {
+      body: formData,
+    })
+
+    console.log('Upload profile picture result:', { data, error })
+
+    if (error) {
+      throw error
+    }
+
+    return data as { secure_url: string; public_id: string; version: number }
+  },
+
 }
 
 export default api

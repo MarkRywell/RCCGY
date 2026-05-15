@@ -9,9 +9,11 @@ type Props = {
   setSearch: (v: string) => void
   setRoleFilter: (v: string) => void
   loading: boolean
+  onEdit: (user: Member) => void
+  onDelete: (user: Member) => void
 }
 
-function AdminUsersPanel({ users, search, roleFilter, setSearch, setRoleFilter, loading }: Props) {
+function AdminUsersPanel({ users, search, roleFilter, setSearch, setRoleFilter, loading, onEdit, onDelete }: Props) {
   return (
     <section className="space-y-4">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -54,7 +56,7 @@ function AdminUsersPanel({ users, search, roleFilter, setSearch, setRoleFilter, 
                 <span className="col-span-2 font-medium">{user.name}</span>
                 <span className="truncate text-white/80">{user.email ?? '—'}</span>
                 <span className="uppercase text-xs font-semibold">{user.role}</span>
-                <RowActions />
+                <RowActions user={user} onEdit={onEdit} onDelete={onDelete} />
               </div>
             ))
           )}
@@ -64,7 +66,13 @@ function AdminUsersPanel({ users, search, roleFilter, setSearch, setRoleFilter, 
   )
 }
 
-function RowActions() {
+type RowActionsProps = {
+  user: Member
+  onEdit: (user: Member) => void
+  onDelete: (user: Member) => void
+}
+
+function RowActions({ user, onEdit, onDelete }: RowActionsProps) {
   const [open, setOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement | null>(null)
 
@@ -86,10 +94,17 @@ function RowActions() {
   return (
     <div className="flex justify-end text-xs">
       <div className="hidden md:flex gap-2">
-        <button type="button" className="rounded-md border border-white/10 px-2 py-1 hover:bg-white/10">Edit</button>
+        <button
+          type="button"
+          className="rounded-md border border-white/10 px-2 py-1 hover:bg-white/10"
+          onClick={() => onEdit(user)}
+        >
+          Edit
+        </button>
         <button
           type="button"
           className="rounded-md border border-red-500/50 text-red-300 px-2 py-1 hover:bg-red-500/10"
+          onClick={() => onDelete(user)}
         >
           Delete
         </button>
@@ -110,14 +125,20 @@ function RowActions() {
           <div className="absolute right-0 z-20 mt-2 w-28 rounded-md border border-white/10 bg-gray-950 p-1 shadow-lg">
             <button
               type="button"
-              onClick={close}
+              onClick={() => {
+                onEdit(user)
+                close()
+              }}
               className="w-full rounded-md px-3 py-2 text-left text-xs hover:bg-white/10"
             >
               Edit
             </button>
             <button
               type="button"
-              onClick={close}
+              onClick={() => {
+                onDelete(user)
+                close()
+              }}
               className="w-full rounded-md px-3 py-2 text-left text-xs text-red-300 hover:bg-red-500/10"
             >
               Delete

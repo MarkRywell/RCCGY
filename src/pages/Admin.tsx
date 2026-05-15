@@ -7,6 +7,7 @@ import AdminSidebar, { type AdminTabKey } from '../layout/AdminSidebar'
 import AdminTopbar from '../components/AdminTopbar'
 import InviteUserModal from '../components/InviteUserModal'
 import AdminUsersPanel from '../components/AdminUsersPanel'
+import EditMemberModal from '../components/EditMemberModal'
 import AdminEventsPanel from '../components/AdminEventsPanel'
 
 function Admin() {
@@ -26,6 +27,8 @@ function Admin() {
   const [loadingEvents, setLoadingEvents] = useState(false)
 
   const [inviteModalOpen, setInviteModalOpen] = useState(false)
+  const [selectedMember, setSelectedMember] = useState<Member | null>(null)
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
 
   const refetchUsers = async (opts?: { search?: string; role?: 'admin' | 'member' }) => {
     setLoadingUsers(true)
@@ -35,6 +38,28 @@ function Admin() {
     })
     setUsers(data)
     setLoadingUsers(false)
+  }
+
+  const handleEdit = (user: Member) => {
+    setSelectedMember(user)
+    setDeleteConfirmId(null)
+  }
+
+  const handleDelete = (user: Member) => {
+    setSelectedMember(null)
+    setDeleteConfirmId(user.id)
+  }
+
+  const confirmDelete = async () => {
+    if (!deleteConfirmId) return
+    setLoadingUsers(true)
+    const { error } = await api.deleteMember(deleteConfirmId)
+    if (error) {
+      console.error('Failed to delete member:', error.message)
+    }
+    setDeleteConfirmId(null)
+    setSelectedMember(null)
+    await refetchUsers()
   }
 
   // Fetch users
@@ -94,6 +119,8 @@ function Admin() {
               setSearch={setUserSearch}
               setRoleFilter={setUserRoleFilter}
               loading={loadingUsers}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
             />
           ) : (
             <AdminEventsPanel
@@ -110,6 +137,39 @@ function Admin() {
           onClose={() => setInviteModalOpen(false)}
           onSuccess={() => refetchUsers()}
         />
+        {selectedMember && (
+          <EditMemberModal
+            key={selectedMember.id} // Reset form when changing member
+            member={selectedMember}
+            onClose={() => { setSelectedMember(null) }}
+            onSaved={() => refetchUsers()}
+          />
+        )}
+
+        {deleteConfirmId && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+            <div className="w-full max-w-sm rounded-lg border border-white/10 bg-gray-950 p-6 shadow-xl space-y-4">
+              <div className="text-lg font-semibold">Delete member</div>
+              <p className="text-sm text-white/70">This will remove the member record. This action cannot be undone.</p>
+              <div className="flex justify-end gap-3">
+                <button
+                  type="button"
+                  className="rounded-md border border-white/10 px-4 py-2 text-sm hover:bg-white/10"
+                  onClick={() => { setDeleteConfirmId(null); setSelectedMember(null) }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
+                  onClick={confirmDelete}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

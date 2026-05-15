@@ -129,8 +129,10 @@ serve(async (req: Request) => {
       await adminSupabase
         .from("members")
         .select("role")
-        .eq("user_id", user_id)
+        .eq("id", user_id)
         .single();
+
+    console.log("Target member:", user_id, targetMember);
 
     if (!targetMember) {
       return new Response(
@@ -177,6 +179,27 @@ serve(async (req: Request) => {
     // members row auto-deletes via
     // ON DELETE CASCADE
     // =========================================
+
+
+    // Check if member has user_id value before attempting to delete auth user
+    if (!targetMember.user_id) {
+
+      await adminSupabase
+        .from("members")
+        .delete()
+        .eq("id", user_id);
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          message: "Member deleted, but no associated auth user to delete.",
+        }),
+        {
+          status: 200,
+          headers: corsHeaders,
+        }
+      );
+    }
 
     const { error: deleteError } =
       await adminSupabase.auth.admin.deleteUser(

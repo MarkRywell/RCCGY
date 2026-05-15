@@ -6,6 +6,7 @@ import Nav from './layout/Nav.tsx';
 import Footer from './layout/Footer.tsx';
 import Loader from './components/Loader.tsx';
 import AdminGuard from './components/AdminGuard.tsx';
+import MemberGuard from './components/MemberGuard.tsx';
 
 const Home = lazy(() => import('./pages/Home'));
 const Events = lazy(() => import('./pages/Events'));
@@ -14,6 +15,7 @@ const About = lazy(() => import('./pages/About'));
 const Contact = lazy(() => import('./pages/Contact'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const MemberProfile = lazy(() => import('./pages/MemberProfile'));
+const MemberMe = lazy(() => import('./pages/MemberMe'));
 const Login = lazy(() => import('./pages/Login'));
 const Admin = lazy(() => import('./pages/Admin'));
 const SetPassword = lazy(() => import('./pages/SetPassword'));
@@ -95,6 +97,14 @@ function App() {
                   <Route path="/partners" element={<Partners />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/contact" element={<Contact />} />
+                  <Route
+                    path="/member/me"
+                    element={(
+                      <MemberGuard>
+                        <MemberMe />
+                      </MemberGuard>
+                    )}
+                  />
                   <Route path="/member/:slug" element={<MemberProfile />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/set-password" element={<SetPassword />} />

@@ -29,6 +29,7 @@ function Admin() {
   const [inviteModalOpen, setInviteModalOpen] = useState(false)
   const [selectedMember, setSelectedMember] = useState<Member | null>(null)
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
+  const [deleting, setDeleting] = useState(false)
 
   const refetchUsers = async (opts?: { search?: string; role?: 'admin' | 'member' }) => {
     setLoadingUsers(true)
@@ -47,19 +48,24 @@ function Admin() {
 
   const handleDelete = (user: Member) => {
     setSelectedMember(null)
-    setDeleteConfirmId(user.id)
+    setDeleteConfirmId(user.user_id ?? user.id)
   }
 
   const confirmDelete = async () => {
     if (!deleteConfirmId) return
+    setDeleting(true)
     setLoadingUsers(true)
-    const { error } = await api.deleteMember(deleteConfirmId)
-    if (error) {
-      console.error('Failed to delete member:', error.message)
+    try {
+      const { error } = await api.deleteMember(deleteConfirmId)
+      if (error) {
+        console.error('Failed to delete member:', error.message)
+      }
+      setDeleteConfirmId(null)
+      setSelectedMember(null)
+      await refetchUsers()
+    } finally {
+      setDeleting(false)
     }
-    setDeleteConfirmId(null)
-    setSelectedMember(null)
-    await refetchUsers()
   }
 
   // Fetch users
@@ -155,16 +161,18 @@ function Admin() {
                 <button
                   type="button"
                   className="rounded-md border border-white/10 px-4 py-2 text-sm hover:bg-white/10"
-                  onClick={() => { setDeleteConfirmId(null); setSelectedMember(null) }}
+                  onClick={() => { if (!deleting) { setDeleteConfirmId(null); setSelectedMember(null) } }}
+                  disabled={deleting}
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
-                  className="rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
+                  className="rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-70"
                   onClick={confirmDelete}
+                  disabled={deleting}
                 >
-                  Delete
+                  {deleting ? 'Deleting...' : 'Delete'}
                 </button>
               </div>
             </div>

@@ -59,6 +59,10 @@ function Login() {
                 const member = await api.getMemberByUserId(userId)
                 if (member?.role === 'admin') {
                     navigate('/admin')
+                } else if (member?.role === 'member' && member.slug) {
+                    navigate(`/member/${member.slug}`)
+                } else {
+                    navigate('/')
                 }
             }
         }

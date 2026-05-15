@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
-import { HiUser } from 'react-icons/hi'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { HiLogin, HiLogout } from 'react-icons/hi'
 import Logo from '../assets/logos/logo.jpg';
+import api, { supabase } from '../lib/supabase'
 
 const NAV_LINKS = [
     { href: '/', label: 'HOME' },
@@ -14,7 +15,42 @@ const NAV_LINKS = [
 
 function Nav() {
     const [isOpen, setIsOpen] = useState(false)
+    const [authReady, setAuthReady] = useState(false)
+    const [isAuthed, setIsAuthed] = useState(false)
+    const navigate = useNavigate()
     const prevBodyOverflow = useRef<string>('')
+
+    // Resolve session and subscribe to auth changes to avoid stale state.
+    useEffect(() => {
+        let active = true
+
+        const initSession = async () => {
+            const session = await api.getSession()
+            if (!active) return
+            setIsAuthed(!!session?.user)
+            setAuthReady(true)
+        }
+
+        void initSession()
+
+        const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+            if (!active) return
+            setIsAuthed(!!session?.user)
+            setAuthReady(true)
+        })
+
+        return () => {
+            active = false
+            data?.subscription.unsubscribe()
+        }
+    }, [])
+
+    const handleLogout = async () => {
+        await api.signOut()
+        setIsAuthed(false)
+        setIsOpen(false)
+        navigate('/')
+    }
 
     // Lock body scroll while open.
     useEffect(() => {
@@ -66,20 +102,34 @@ function Nav() {
                 ))}
             </ul>
             
-            {/* Desktop login link with NavLink-style hover/active */}
-            <NavLink
-                to="/login"
-                className={({ isActive }) =>
-                    [
-                        'hidden sm:inline-flex items-center gap-2 md:gap-1 lg:gap-2 md:pl-4 font-bold text-lg transition-all duration-200 hover:text-primary hover:scale-105',
-                        isActive ? 'text-white' : '',
-                    ].join(' ')
-                }
-                aria-label="Go to login"
-            >
-                <HiUser className="text-lg" aria-hidden="true" />
-                <span>LOGIN</span>
-            </NavLink>
+            {/* Desktop auth CTA */}
+            {authReady && (
+                isAuthed ? (
+                    <button
+                        type="button"
+                        className="hidden sm:inline-flex items-center gap-2 md:gap-1 lg:gap-2 md:pl-4 font-bold text-lg transition-all duration-200 hover:text-primary hover:scale-105"
+                        aria-label="Log out"
+                        onClick={handleLogout}
+                    >
+                        <HiLogout className="text-lg" aria-hidden="true" />
+                        <span>LOGOUT</span>
+                    </button>
+                ) : (
+                    <NavLink
+                        to="/login"
+                        className={({ isActive }) =>
+                            [
+                                'hidden sm:inline-flex items-center gap-2 md:gap-1 lg:gap-2 md:pl-4 font-bold text-lg transition-all duration-200 hover:text-primary hover:scale-105',
+                                isActive ? 'text-white' : '',
+                            ].join(' ')
+                        }
+                        aria-label="Go to login"
+                    >
+                        <HiLogin className="text-lg" aria-hidden="true" />
+                        <span>LOGIN</span>
+                    </NavLink>
+                )
+            )}
 
             {/* Mobile burger */}
             <button
@@ -175,20 +225,34 @@ function Nav() {
                             </li>
                         ))}
                         <li className="px-2 pt-2">
-                            <NavLink
-                                to="/login"
-                                className={({ isActive }) =>
-                                    [
-                                        'flex items-center justify-start gap-2 rounded-md px-3 py-3 transition-colors hover:bg-white/10 hover:text-primary',
-                                        isActive ? 'text-primary' : '',
-                                    ].join(' ')
-                                }
-                                aria-label="Go to login"
-                                onClick={() => setIsOpen(false)}
-                            >
-                                <HiUser className="text-lg" aria-hidden="true" />
-                                <span>LOGIN</span>
-                            </NavLink>
+                            {authReady && (
+                                isAuthed ? (
+                                    <button
+                                        type="button"
+                                        className="flex w-full items-center justify-start gap-2 rounded-md px-3 py-3 transition-colors hover:bg-white/10 hover:text-primary"
+                                        aria-label="Log out"
+                                        onClick={handleLogout}
+                                    >
+                                        <HiLogout className="text-lg" aria-hidden="true" />
+                                        <span>LOGOUT</span>
+                                    </button>
+                                ) : (
+                                    <NavLink
+                                        to="/login"
+                                        className={({ isActive }) =>
+                                            [
+                                                'flex items-center justify-start gap-2 rounded-md px-3 py-3 transition-colors hover:bg-white/10 hover:text-primary',
+                                                isActive ? 'text-primary' : '',
+                                            ].join(' ')
+                                        }
+                                        aria-label="Go to login"
+                                        onClick={() => setIsOpen(false)}
+                                    >
+                                        <HiLogin className="text-lg" aria-hidden="true" />
+                                        <span>LOGIN</span>
+                                    </NavLink>
+                                )
+                            )}
                         </li>
                     </ul>
                 </aside>

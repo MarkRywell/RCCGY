@@ -9,6 +9,7 @@ export type Member = {
     phone?: string | null;
     role: MemberRole;
     profile_picture_url?: string | null;
+    profile_picture_public_id?: string | null;
     time_5k?: string | null;
     time_10k?: string | null;
     time_half_marathon?: string | null;

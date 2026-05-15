@@ -4,7 +4,9 @@ import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import Header from './layout/Header.tsx';
 import Nav from './layout/Nav.tsx';
 import Footer from './layout/Footer.tsx';
-import Loader from './pages/Loader.tsx';
+import Loader from './components/Loader.tsx';
+import AdminGuard from './components/AdminGuard.tsx';
+import MemberGuard from './components/MemberGuard.tsx';
 
 const Home = lazy(() => import('./pages/Home'));
 const Events = lazy(() => import('./pages/Events'));
@@ -13,6 +15,11 @@ const About = lazy(() => import('./pages/About'));
 const Contact = lazy(() => import('./pages/Contact'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const MemberProfile = lazy(() => import('./pages/MemberProfile'));
+const MemberMe = lazy(() => import('./pages/MemberMe'));
+const Login = lazy(() => import('./pages/Login'));
+const Admin = lazy(() => import('./pages/Admin'));
+const SetPassword = lazy(() => import('./pages/SetPassword'));
+
 
 function App() {
   const location = useLocation();
@@ -27,6 +34,9 @@ function App() {
       '/partners': 'Partners | RCCGY',
       '/about': 'About | RCCGY',
       '/contact': 'Contact | RCCGY',
+      '/login': 'Login | RCCGY',
+      '/admin': 'Admin Dashboard | RCCGY',
+      '/set-password': 'Set Password | RCCGY',
     };
 
     const isMemberRoute = location.pathname.startsWith('/member/');
@@ -70,27 +80,53 @@ function App() {
 
   return (
     <>
-      <div className="min-h-dvh w-full overflow-x-hidden">
-        {/* Sticky stack: Header collapses, Nav stays visible */}
-        <div className="sticky top-0 z-50">
-          <Header hidden={hideHeader} />
-          <Nav />
-        </div>
-        <Suspense fallback={<Loader />}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/events" element={<Events />} />
-            <Route path="/partners" element={<Partners />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/member/:slug" element={<MemberProfile />} />
+      <Suspense fallback={<Loader />}>
+        <Routes>
+          {/* Public shell */}
+          <Route
+            path="/*"
+            element={(
+              <div className="min-h-dvh w-full overflow-x-hidden">
+                <div className="sticky top-0 z-50">
+                  <Header hidden={hideHeader} />
+                  <Nav />
+                </div>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/events" element={<Events />} />
+                  <Route path="/partners" element={<Partners />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route
+                    path="/member/me"
+                    element={(
+                      <MemberGuard>
+                        <MemberMe />
+                      </MemberGuard>
+                    )}
+                  />
+                  <Route path="/member/:slug" element={<MemberProfile />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/set-password" element={<SetPassword />} />
+                  {/* Fallback within public shell */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+                <Footer />
+              </div>
+            )}
+          />
 
-            {/* Fallback route */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Suspense>
-        <Footer />
-      </div>
+          {/* Admin shell (no Header/Nav/Footer) */}
+          <Route
+            path="/admin"
+            element={(
+              <AdminGuard>
+                <Admin />
+              </AdminGuard>
+            )}
+          />
+        </Routes>
+      </Suspense>
     </>
   );
 }

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { HiLogin, HiLogout } from 'react-icons/hi'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
+import { HiLogin, HiLogout, HiUser } from 'react-icons/hi'
 import Logo from '../assets/logos/logo.jpg';
 import api, { supabase } from '../lib/supabase'
 
@@ -17,26 +17,56 @@ function Nav() {
     const [isOpen, setIsOpen] = useState(false)
     const [authReady, setAuthReady] = useState(false)
     const [isAuthed, setIsAuthed] = useState(false)
+    const [memberSlug, setMemberSlug] = useState<string | null>(null)
+    const [memberRole, setMemberRole] = useState<'admin' | 'member' | null>(null)
     const navigate = useNavigate()
+    const location = useLocation()
     const prevBodyOverflow = useRef<string>('')
 
     // Resolve session and subscribe to auth changes to avoid stale state.
     useEffect(() => {
         let active = true
 
-        const initSession = async () => {
+        const loadSession = async () => {
             const session = await api.getSession()
             if (!active) return
-            setIsAuthed(!!session?.user)
+            const userId = session?.user?.id ?? null
+            setIsAuthed(!!userId)
+
+            if (userId) {
+                const member = await api.getMemberByUserId(userId)
+                if (!active) return
+                setMemberSlug(member?.slug ?? null)
+                setMemberRole(member?.role === 'admin' || member?.role === 'member' ? member.role : null)
+            } else {
+                setMemberSlug(null)
+                setMemberRole(null)
+            }
+
             setAuthReady(true)
         }
 
-        void initSession()
+        void loadSession()
 
         const { data } = supabase.auth.onAuthStateChange((_event, session) => {
             if (!active) return
-            setIsAuthed(!!session?.user)
-            setAuthReady(true)
+            const userId = session?.user?.id ?? null
+            setIsAuthed(!!userId)
+
+            const refreshMember = async () => {
+                if (userId) {
+                    const member = await api.getMemberByUserId(userId)
+                    if (!active) return
+                    setMemberSlug(member?.slug ?? null)
+                    setMemberRole(member?.role === 'admin' || member?.role === 'member' ? member.role : null)
+                } else {
+                    setMemberSlug(null)
+                    setMemberRole(null)
+                }
+                setAuthReady(true)
+            }
+
+            void refreshMember()
         })
 
         return () => {
@@ -51,6 +81,11 @@ function Nav() {
         setIsOpen(false)
         navigate('/')
     }
+
+    const profileHref = memberRole === 'admin' ? '/admin' : (memberSlug ? `/member/${memberSlug}` : '/member/me')
+    const isProfileRoute = location.pathname.startsWith('/member')
+    const isAdminRoute = location.pathname.startsWith('/admin')
+    const showLogout = isProfileRoute || isAdminRoute
 
     // Lock body scroll while open.
     useEffect(() => {
@@ -105,15 +140,27 @@ function Nav() {
             {/* Desktop auth CTA */}
             {authReady && (
                 isAuthed ? (
-                    <button
-                        type="button"
-                        className="hidden sm:inline-flex items-center gap-2 md:gap-1 lg:gap-2 md:pl-4 font-bold text-lg transition-all duration-200 hover:text-primary hover:scale-105"
-                        aria-label="Log out"
-                        onClick={handleLogout}
-                    >
-                        <HiLogout className="text-lg" aria-hidden="true" />
-                        <span>LOGOUT</span>
-                    </button>
+                    showLogout ? (
+                        <button
+                            type="button"
+                            className="hidden sm:inline-flex items-center gap-2 md:gap-1 lg:gap-2 md:pl-4 font-bold text-lg transition-all duration-200 hover:text-primary hover:scale-105"
+                            aria-label="Log out"
+                            onClick={handleLogout}
+                        >
+                            <HiLogout className="text-lg" aria-hidden="true" />
+                            <span>LOGOUT</span>
+                        </button>
+                    ) : (
+                        <button
+                            type="button"
+                            className="hidden sm:inline-flex items-center gap-2 md:gap-1 lg:gap-2 md:pl-4 font-bold text-lg transition-all duration-200 hover:text-primary hover:scale-105"
+                            aria-label="Back to profile"
+                            onClick={() => navigate(profileHref)}
+                        >
+                            <HiUser className="text-lg" aria-hidden="true" />
+                            <span>BACK TO PROFILE</span>
+                        </button>
+                    )
                 ) : (
                     <NavLink
                         to="/login"
@@ -227,15 +274,30 @@ function Nav() {
                         <li className="px-2 pt-2">
                             {authReady && (
                                 isAuthed ? (
-                                    <button
-                                        type="button"
-                                        className="flex w-full items-center justify-start gap-2 rounded-md px-3 py-3 transition-colors hover:bg-white/10 hover:text-primary"
-                                        aria-label="Log out"
-                                        onClick={handleLogout}
-                                    >
-                                        <HiLogout className="text-lg" aria-hidden="true" />
-                                        <span>LOGOUT</span>
-                                    </button>
+                                    showLogout ? (
+                                        <button
+                                            type="button"
+                                            className="flex w-full items-center justify-start gap-2 rounded-md px-3 py-3 transition-colors hover:bg-white/10 hover:text-primary"
+                                            aria-label="Log out"
+                                            onClick={handleLogout}
+                                        >
+                                            <HiLogout className="text-lg" aria-hidden="true" />
+                                            <span>LOGOUT</span>
+                                        </button>
+                                    ) : (
+                                        <button
+                                            type="button"
+                                            className="flex w-full items-center justify-start gap-2 rounded-md px-3 py-3 transition-colors hover:bg-white/10 hover:text-primary"
+                                            aria-label="Back to profile"
+                                            onClick={() => {
+                                                setIsOpen(false)
+                                                navigate(profileHref)
+                                            }}
+                                        >
+                                            <HiUser className="text-lg" aria-hidden="true" />
+                                            <span>BACK TO PROFILE</span>
+                                        </button>
+                                    )
                                 ) : (
                                     <NavLink
                                         to="/login"

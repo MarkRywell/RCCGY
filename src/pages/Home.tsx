@@ -1,8 +1,8 @@
 
-import { useEffect, useRef, useState } from "react";
 // import LaborDay from '../assets/images/events/labor-day.jpg';
 import StatsCard from '../components/StatsCard';
 import ImageCarousel from '../components/ImageCarousel';
+import InViewAnimate from '../components/InViewAnimate';
 import { FaPersonRunning } from "react-icons/fa6";
 import { IoIosPeople } from "react-icons/io";
 import { LiaCalendarDaySolid } from "react-icons/lia";
@@ -10,29 +10,7 @@ import { homeImages } from '../assets/data/photos';
 
 
 function Home() {
-  const aboutSectionRef = useRef<HTMLDivElement | null>(null);
-  const [aboutVisible, setAboutVisible] = useState(false);
-
-  useEffect(() => {
-    const target = aboutSectionRef.current;
-    if (!target) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setAboutVisible(true);
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.25 }
-    );
-
-    observer.observe(target);
-
-    return () => observer.disconnect();
-  }, []);
+  // Keeping hero immediate; using InViewAnimate for below-the-fold sections.
 
   return (
     <>
@@ -73,26 +51,23 @@ function Home() {
 
         {/* stats section */}
         <div className='w-full bg-dark flex items-center justify-center px-10 sm:px-20 py-10'>
-          <StatsCard icon={<IoIosPeople />} title="ACTIVE RUNNERS" value={388} unit="+" animate />
+          <StatsCard icon={<IoIosPeople />} title="ACTIVE RUNNERS" value={400} unit="+" animate />
           <StatsCard icon={<LiaCalendarDaySolid />} title="RUNNING EVENTS" value={3} unit="/wk" animate />
           <StatsCard icon={<FaPersonRunning />} title="WEEKLY KILOMETERS RUN" value={30} unit="km" animate />
         </div>
 
         { /* about us section */}
-        <div
-          ref={aboutSectionRef}
-          className='w-full bg-gray-800 flex flex-col px-10 sm:px-20 py-10 gap-5 text-white'
-        >
-          <div className={`${aboutVisible ? 'animate-hero-enter' : 'opacity-0 translate-x-6'}`}>
+        <div className='w-full bg-gray-800 flex flex-col px-10 sm:px-20 py-10 gap-5 text-white'>
+          <InViewAnimate enterClassName="animate-hero-enter" initialClassName="opacity-0 translate-x-6">
             <h3 className='text-left font-bold text-primary'>ABOUT US</h3>
             <h1 className='text-2xl sm:text-3xl font-bold'>WELCOME TO RANNN CREW CGY!</h1>
             <p>Welcome to our community! We are dedicated to fostering a supportive and energetic environment for runners of all levels. Join us and be part of our growing family.</p>
-          </div>
+          </InViewAnimate>
           
           { /* images */}
-          <div className={`${aboutVisible ? 'animate-hero-enter-right' : 'opacity-0 -translate-x-6 sm:translate-x-6'}`}>
+          <InViewAnimate enterClassName="animate-hero-enter-right" initialClassName="opacity-0 -translate-x-6 sm:translate-x-6">
             <ImageCarousel images={homeImages} intervalMs={3500} />
-          </div>
+          </InViewAnimate>
         </div>
       </div>
     </>

@@ -34,7 +34,7 @@ function EditMemberModal({ member, onClose, onSaved }: Props) {
       profile_picture_url: member?.profile_picture_url ?? '',
       profile_picture_public_id: member?.profile_picture_public_id ?? '',
     }),
-    [member?.id, member?.name, member?.phone, member?.profile_picture_public_id, member?.profile_picture_url]
+    [member?.name, member?.phone, member?.profile_picture_public_id, member?.profile_picture_url]
   )
 
   useEffect(() => {

@@ -89,7 +89,7 @@ function MemberProfile() {
         return <Navigate to="/404" replace />;
     }
 
-    const { name, role, phone, email } = member;
+    const { name, role, email } = member;
 
     return (
         <>
@@ -134,11 +134,8 @@ function MemberProfile() {
 
                     <h1 className="text-3xl font-bold">{name}</h1>
                     <h2 className="text-xl text-secondary font-semibold">{role.toUpperCase()}</h2>
+                    <p className="text-sm font-semibold text-gray-400">{slug || "N/A"}</p>
                     <div className="flex flex-col gap-2 w-full px-5 md:w-1/2 lg:w-1/3">
-                        <div className="text-lg flex justify-between items-center">
-                            <p>Phone</p>
-                            <p>{phone || "N/A"}</p>
-                        </div>
                         <div className="text-lg flex justify-between items-center">
                             <p>Email</p>
                             <p>{email || "N/A"}</p>

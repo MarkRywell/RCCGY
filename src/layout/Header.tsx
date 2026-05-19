@@ -10,7 +10,7 @@ function Header({ hidden = false }: HeaderProps) {
         'flex items-start sm:items-center justify-between gap-3 text-xs',
         // animate collapse/expand
         'overflow-hidden will-change-[max-height,opacity,transform]',
-        'transition-[max-height,opacity,transform] duration-300 ease-in-out',
+        'transition-[max-height,opacity,transform]',
         hidden
           ? 'max-h-0 py-0 opacity-0 -translate-y-2 pointer-events-none'
           : 'max-h-24 py-2 sm:py-1 opacity-100 translate-y-0',

@@ -122,6 +122,10 @@ export const homeImages = [
       alt: "Girls",
     },
     {
+      src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1779200866/rccgy/clout_axy4fh.jpg",
+      alt: "Friends"
+    },
+    {
       src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1777604050/rccgy/party_run_jib1eu.jpg",
       alt: "KICKOFF RUN 2026",
     },

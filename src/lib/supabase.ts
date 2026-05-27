@@ -214,6 +214,39 @@ export const api = {
     return (data ?? []) as Event[]
   },
 
+  getUpcomingEvent: async (multiple: boolean = false): Promise<Event | Event[] | null> => {
+    const today = new Date().toISOString().split('T')[0] // Get current date in YYYY-MM-DD format
+
+    if (multiple) {
+      const { data, error } = await supabase
+        .from('events')
+        .select('*')
+        .gte('event_date', today)
+        .order('event_date', { ascending: true })
+      if (error) {
+        console.error('Error fetching upcoming events:', error)
+        return null
+      }
+
+      return (data as Event[]) ?? null
+    }
+
+    const { data, error } = await supabase
+      .from('events')
+      .select('*')
+      .gte('event_date', today)
+      .order('event_date', { ascending: true })
+      .limit(1)
+      .single()
+
+    if (error) {
+      console.error('Error fetching upcoming event:', error)
+      return null
+    }
+
+    return (data as Event) ?? null
+  },
+
   createEvent: async (payload: Partial<Event>) => {
     const { data, error } = await supabase
       .from('events')

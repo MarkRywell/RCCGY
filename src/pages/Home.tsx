@@ -1,5 +1,6 @@
 
 // import LaborDay from '../assets/images/events/labor-day.jpg';
+import { useEffect, useState } from 'react';
 import StatsCard from '../components/StatsCard';
 import ImageCarousel from '../components/ImageCarousel';
 import InViewAnimate from '../components/InViewAnimate';
@@ -7,10 +8,47 @@ import { FaPersonRunning } from "react-icons/fa6";
 import { IoIosPeople } from "react-icons/io";
 import { LiaCalendarDaySolid } from "react-icons/lia";
 import { homeImages } from '../assets/data/photos';
+import { api } from '../lib/supabase';
+import type { Event } from '../types/events';
+import { FALLBACK_EVENT_IMAGE } from '../lib/constants';
 
 
 function Home() {
-  // Keeping hero immediate; using InViewAnimate for below-the-fold sections.
+  const [upcoming, setUpcoming] = useState<Event | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    const load = async () => {
+      setLoading(true);
+      const data = await api.getUpcomingEvent(false);
+      if (!isMounted) return;
+      if (!data) {
+        setUpcoming(null);
+        setError(null);
+        setLoading(false);
+        return;
+      }
+      setUpcoming(data as Event);
+      setError(null);
+      setLoading(false);
+    };
+    load().catch((err) => {
+      if (!isMounted) return;
+      console.error('Error loading upcoming event:', err);
+      setError('Failed to load upcoming event');
+      setUpcoming(null);
+      setLoading(false);
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const photo = upcoming?.photo_url || FALLBACK_EVENT_IMAGE;
+  const title = upcoming?.name || 'Coming Soon';
+  const date = upcoming?.event_date ? new Date(upcoming.event_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : null;
 
   return (
     <>
@@ -42,10 +80,22 @@ function Home() {
                 Join Our Club
               </a>
             </div>
-            {/* <div className="w-full sm:flex-none sm:max-w-sm xl:max-w-md md:max-w-72 rounded-2xl overflow-hidden bg-black/30 p-4 text-white">
-              <p className="inline-flex items-center w-fit bg-primary font-bold px-2 py-2 rounded-t-md mb-0.5 text-black">NEW EVENT</p>
-              <img src={LaborDay} alt="Time Trial Event" className="block w-full xs:h-70 sm:h-full rounded-tr-md rounded-br-md rounded-bl-md object-cover"/>
-            </div> */}
+            {(!loading && upcoming) && (
+              <div className="w-full sm:flex-none sm:max-w-sm xl:max-w-md md:max-w-72 rounded-2xl overflow-hidden bg-black/30 p-4 text-white">
+                <p className="inline-flex items-center w-fit bg-secondary font-bold px-2 py-2 rounded-t-md mb-0.5 text-black">NEW EVENT</p>
+                <div className="flex flex-col gap-2">
+                  <div className="relative w-full">
+                    <div className="absolute inset-0 bg-black/30" />
+                    <img src={photo} alt={title} className="block w-full xs:h-70 md:h-72 rounded-tr-md rounded-br-md rounded-bl-md object-cover" />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <p className="text-lg font-semibold">{title}</p>
+                    {date && <p className="text-sm text-gray-200">{date}</p>}
+                    {error && <p className="text-sm text-red-300">{error}</p>}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

@@ -1,8 +1,46 @@
+import { useEffect, useState } from "react";
 import EventCard from "../components/EventCard";
 import InViewAnimate from "../components/InViewAnimate";
+import { api } from "../lib/supabase";
+import type { Event } from "../types/events";
+import { FALLBACK_EVENT_IMAGE } from "../lib/constants";
 
 
 function Events() {
+  const [events, setEvents] = useState<Event[] | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    const load = async () => {
+      setLoading(true);
+      const data = await api.getUpcomingEvent(true);
+      if (!isMounted) return;
+      if (!data) {
+        setEvents([]);
+        setError(null);
+        setLoading(false);
+        return;
+      }
+      setEvents(data as Event[]);
+      setError(null);
+      setLoading(false);
+    };
+    load().catch((err) => {
+      if (!isMounted) return;
+      console.error('Error loading upcoming events:', err);
+      setError('Failed to load upcoming events');
+      setEvents([]);
+      setLoading(false);
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const hasEvents = (events?.length ?? 0) > 0;
+
   return (
     <>
       <div className="min-h-screen w-full flex flex-col">
@@ -23,8 +61,27 @@ function Events() {
           <p className="text-sm font-semibold">RUNNING EVENTS</p>
           <div className="w-full h-full flex flex-col gap-5 items-center justify-center">
             <h2 className="text-3xl font-bold mt-2">UPCOMING EVENTS</h2>
-            <p>Coming Soon...</p>
+            {loading && <p>Loading...</p>}
+            {error && <p className="text-red-300">{error}</p>}
+            {!loading && !hasEvents && <p>Coming Soon...</p>}
           </div>
+
+          {hasEvents && (
+            <InViewAnimate
+              enterClassName="animate-hero-enter"
+              initialClassName="opacity-0 translate-y-4"
+              className="flex flex-col gap-8 w-full"
+            >
+              {events?.map((event) => (
+                <EventCard
+                  key={event.id}
+                  title={event.name}
+                  location={event.location ?? "TBA"}
+                  image={event.photo_url || FALLBACK_EVENT_IMAGE}
+                />
+              ))}
+            </InViewAnimate>
+          )}
 
           <div className="w-full h-full flex flex-col gap-5 items-center justify-center border-t-2 border-gray-400 mt-10 pt-10">
             <h2 className="text-3xl font-bold mt-2">WEEKLY EVENTS</h2>

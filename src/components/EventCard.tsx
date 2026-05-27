@@ -18,7 +18,7 @@ function EventCard ({ image, title, location }: { image: string; title: string; 
                 </div>
             </div>
             
-            <div>
+            <div className="w-full">
                 <img src={image} alt={title} className="h-full w-full object-cover xl:pl-60" />
             </div>
         </div>

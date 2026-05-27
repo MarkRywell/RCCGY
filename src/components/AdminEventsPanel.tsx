@@ -7,9 +7,12 @@ type Props = {
   search: string
   setSearch: (v: string) => void
   loading: boolean
+  onEdit: (event: Event) => void
+  onDelete: (event: Event) => void
+  deletingId?: string | null
 }
 
-function AdminEventsPanel({ events, search, setSearch, loading }: Props) {
+function AdminEventsPanel({ events, search, setSearch, loading, onEdit, onDelete, deletingId }: Props) {
   return (
     <section className="space-y-4">
       <div className="flex items-center gap-2 rounded-md border border-white/10 bg-gray-950 px-3 py-2">
@@ -40,7 +43,11 @@ function AdminEventsPanel({ events, search, setSearch, loading }: Props) {
                 <span className="truncate col-span-2 font-medium">{event.name}</span>
                 <span className="text-white/80">{new Date(event.event_date).toLocaleDateString()}</span>
                 <span className="truncate text-white/80">{event.location ?? '—'}</span>
-                <RowActions />
+                <RowActions
+                  onEdit={() => onEdit(event)}
+                  onDelete={() => onDelete(event)}
+                  deleting={deletingId === event.id}
+                />
               </div>
             ))
           )}
@@ -50,7 +57,7 @@ function AdminEventsPanel({ events, search, setSearch, loading }: Props) {
   )
 }
 
-function RowActions() {
+function RowActions({ onEdit, onDelete, deleting }: { onEdit: () => void; onDelete: () => void; deleting: boolean }) {
   const [open, setOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement | null>(null)
 
@@ -72,12 +79,20 @@ function RowActions() {
   return (
     <div className="flex justify-end text-xs">
       <div className="hidden md:flex gap-2">
-        <button type="button" className="rounded-md border border-white/10 px-2 py-1 hover:bg-white/10">Edit</button>
+        <button
+          type="button"
+          className="rounded-md border border-white/10 px-2 py-1 hover:bg-white/10"
+          onClick={onEdit}
+        >
+          Edit
+        </button>
         <button
           type="button"
           className="rounded-md border border-red-500/50 text-red-300 px-2 py-1 hover:bg-red-500/10"
+          onClick={onDelete}
+          disabled={deleting}
         >
-          Delete
+          {deleting ? 'Deleting...' : 'Delete'}
         </button>
       </div>
 
@@ -96,17 +111,18 @@ function RowActions() {
           <div className="absolute right-0 z-20 mt-2 w-28 rounded-md border border-white/10 bg-gray-950 p-1 shadow-lg">
             <button
               type="button"
-              onClick={close}
+              onClick={() => { close(); onEdit() }}
               className="w-full rounded-md px-3 py-2 text-left text-xs hover:bg-white/10"
             >
               Edit
             </button>
             <button
               type="button"
-              onClick={close}
-              className="w-full rounded-md px-3 py-2 text-left text-xs text-red-300 hover:bg-red-500/10"
+              onClick={() => { close(); onDelete() }}
+              className="w-full rounded-md px-3 py-2 text-left text-xs text-red-300 hover:bg-red-500/10 disabled:opacity-70"
+              disabled={deleting}
             >
-              Delete
+              {deleting ? 'Deleting...' : 'Delete'}
             </button>
           </div>
         )}

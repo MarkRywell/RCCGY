@@ -9,6 +9,7 @@ import InviteUserModal from '../components/InviteUserModal'
 import AdminUsersPanel from '../components/AdminUsersPanel'
 import EditMemberModal from '../components/EditMemberModal'
 import AdminEventsPanel from '../components/AdminEventsPanel'
+import AdminEventModal, { type EventFormValues } from '../components/AdminEventModal'
 
 function Admin() {
   const navigate = useNavigate()
@@ -25,6 +26,11 @@ function Admin() {
   const [events, setEvents] = useState<Event[]>([])
   const [eventSearch, setEventSearch] = useState('')
   const [loadingEvents, setLoadingEvents] = useState(false)
+  const [eventModalOpen, setEventModalOpen] = useState(false)
+  const [editingEvent, setEditingEvent] = useState<Event | null>(null)
+  const [eventSubmitting, setEventSubmitting] = useState(false)
+  const [eventDeleteId, setEventDeleteId] = useState<string | null>(null)
+  const [eventDeleting, setEventDeleting] = useState(false)
 
   const [inviteModalOpen, setInviteModalOpen] = useState(false)
   const [selectedMember, setSelectedMember] = useState<Member | null>(null)
@@ -87,6 +93,75 @@ function Admin() {
     fetchEvents()
   }, [eventSearch])
 
+  const refetchEvents = async (searchOverride?: string) => {
+    setLoadingEvents(true)
+    const data = await api.getEvents({ search: searchOverride ?? eventSearch })
+    setEvents(data)
+    setLoadingEvents(false)
+  }
+
+  const openEditEvent = (ev: Event) => {
+    setEditingEvent(ev)
+    setEventModalOpen(true)
+  }
+
+  const handleSubmitEvent = async (values: EventFormValues) => {
+    setEventSubmitting(true)
+    try {
+      const payload: Partial<Event> = {
+        name: values.name.trim(),
+        event_date: values.event_date,
+        location: values.location?.trim() || null,
+        description: values.description?.trim() || null,
+        photo_url: values.photo_url?.trim() || null,
+      }
+
+      let eventId = editingEvent?.id
+
+      if (editingEvent) {
+        const { data, error } = await api.updateEvent(editingEvent.id, payload)
+        if (error) throw error
+        eventId = data?.id ?? editingEvent.id
+      } else {
+        const { data, error } = await api.createEvent(payload)
+        if (error) throw error
+        eventId = data?.id ?? null
+      }
+
+      // If file selected, upload and patch photo_url
+      if (values.photo_file && eventId) {
+        const uploadResult = await api.uploadEventPhoto(values.photo_file, eventId)
+        const { secure_url } = uploadResult
+        const { error: updatePhotoError } = await api.updateEvent(eventId, { photo_url: secure_url })
+        if (updatePhotoError) throw updatePhotoError
+      }
+
+      await refetchEvents()
+      setEventModalOpen(false)
+      setEditingEvent(null)
+    } catch (error) {
+      console.error('Failed to save event:', error)
+      throw error
+    } finally {
+      setEventSubmitting(false)
+    }
+  }
+
+  const confirmDeleteEvent = async () => {
+    if (!eventDeleteId) return
+    setEventDeleting(true)
+    try {
+      const { error } = await api.deleteEvent(eventDeleteId)
+      if (error) {
+        console.error('Failed to delete event:', error.message)
+      }
+      setEventDeleteId(null)
+      await refetchEvents()
+    } finally {
+      setEventDeleting(false)
+    }
+  }
+
   return (
     <div className="min-h-screen w-full bg-gray-900 text-white flex">
       <AdminSidebar
@@ -114,6 +189,7 @@ function Admin() {
           activeTab={activeTab}
           onOpenSidebar={() => setSidebarOpen(true)}
           onOpenInviteUser={() => setInviteModalOpen(true)}
+          onOpenCreateEvent={() => { setEditingEvent(null); setEventModalOpen(true) }}
         />
 
         <main className="flex-1 px-4 sm:px-6 lg:px-10 py-6">
@@ -134,6 +210,9 @@ function Admin() {
               search={eventSearch}
               setSearch={setEventSearch}
               loading={loadingEvents}
+              onEdit={openEditEvent}
+              onDelete={(ev) => setEventDeleteId(ev.id)}
+              deletingId={eventDeleteId}
             />
           )}
         </main>
@@ -178,6 +257,41 @@ function Admin() {
             </div>
           </div>
         )}
+
+        {eventDeleteId && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+            <div className="w-full max-w-sm rounded-lg border border-white/10 bg-gray-950 p-6 shadow-xl space-y-4">
+              <div className="text-lg font-semibold">Delete event</div>
+              <p className="text-sm text-white/70">This will remove the event. This action cannot be undone.</p>
+              <div className="flex justify-end gap-3">
+                <button
+                  type="button"
+                  className="rounded-md border border-white/10 px-4 py-2 text-sm hover:bg-white/10"
+                  onClick={() => setEventDeleteId(null)}
+                  disabled={eventDeleting}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-70"
+                  onClick={confirmDeleteEvent}
+                  disabled={eventDeleting}
+                >
+                  {eventDeleting ? 'Deleting...' : 'Delete'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <AdminEventModal
+          open={eventModalOpen}
+          initialEvent={editingEvent}
+          onClose={() => { if (!eventSubmitting) { setEventModalOpen(false); setEditingEvent(null) } }}
+          onSubmit={handleSubmitEvent}
+          submitting={eventSubmitting}
+        />
       </div>
     </div>
   )

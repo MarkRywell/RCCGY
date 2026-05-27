@@ -5,9 +5,10 @@ type AdminTopbarProps = {
   activeTab: AdminTabKey
   onOpenSidebar: () => void
   onOpenInviteUser?: () => void
+  onOpenCreateEvent?: () => void
 }
 
-function AdminTopbar({ activeTab, onOpenSidebar, onOpenInviteUser }: AdminTopbarProps) {
+function AdminTopbar({ activeTab, onOpenSidebar, onOpenInviteUser, onOpenCreateEvent }: AdminTopbarProps) {
   const tabLabel = activeTab === 'users' ? 'User Management' : 'Event Management'
 
   return (
@@ -31,8 +32,9 @@ function AdminTopbar({ activeTab, onOpenSidebar, onOpenInviteUser }: AdminTopbar
           className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white hover:opacity-90 transition disabled:opacity-60"
           onClick={() => {
             if (activeTab === 'users') onOpenInviteUser?.()
+            if (activeTab === 'events') onOpenCreateEvent?.()
           }}
-          disabled={activeTab !== 'users'}
+          disabled={activeTab !== 'users' && activeTab !== 'events'}
         >
           <HiOutlinePlus className="h-4 w-4" />
           {activeTab === 'users' ? 'New User' : 'New Event'}

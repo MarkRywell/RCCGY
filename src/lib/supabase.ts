@@ -284,6 +284,25 @@ export const api = {
     return { error }
   },
 
+  uploadEventPhoto: async (
+    file: File,
+    eventId: string
+  ): Promise<{ secure_url: string; public_id: string; version: number }> => {
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('eventId', eventId)
+
+    const { data, error } = await supabase.functions.invoke('upload-event-photo', {
+      body: formData,
+    })
+
+    if (error) {
+      throw error
+    }
+
+    return data as { secure_url: string; public_id: string; version: number }
+  },
+
   uploadProfilePicture: async (
     file: File,
     memberId: string

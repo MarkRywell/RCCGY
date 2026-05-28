@@ -81,7 +81,7 @@ function Home() {
               </a>
             </div>
             {(!loading && upcoming) && (
-              <div className="w-full sm:flex-none sm:max-w-sm xl:max-w-md md:max-w-72 rounded-2xl overflow-hidden bg-black/30 p-4 text-white">
+              <div className="w-full sm:flex-none sm:max-w-sm xl:max-w-md md:max-w-72 rounded-2xl overflow-hidden bg-black/30 p-4 text-white animate-hero-enter-right">
                 <p className="inline-flex items-center w-fit bg-secondary font-bold px-2 py-2 rounded-t-md mb-0.5 text-black">NEW EVENT</p>
                 <div className="flex flex-col gap-2">
                   <div className="relative w-full">

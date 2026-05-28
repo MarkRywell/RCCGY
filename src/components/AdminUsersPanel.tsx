@@ -14,6 +14,19 @@ type Props = {
 }
 
 function AdminUsersPanel({ users, search, roleFilter, setSearch, setRoleFilter, loading, onEdit, onDelete }: Props) {
+  const [photoUser, setPhotoUser] = useState<Member | null>(null)
+  const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false)
+
+  const openPhotoModal = (user: Member) => {
+    setPhotoUser(user)
+    setIsPhotoModalOpen(true)
+  }
+
+  const closePhotoModal = () => {
+    setIsPhotoModalOpen(false)
+    setPhotoUser(null)
+  }
+
   return (
     <section className="space-y-4">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -53,7 +66,13 @@ function AdminUsersPanel({ users, search, roleFilter, setSearch, setRoleFilter, 
           ) : (
             users.map((user) => (
               <div key={user.id} className="grid grid-cols-5 gap-2 px-4 py-3 text-sm items-center">
-                <span className="col-span-2 font-medium">{user.name}</span>
+                <button
+                  type="button"
+                  onClick={() => openPhotoModal(user)}
+                  className="col-span-2 text-left font-medium hover:text-primary focus-visible:outline-2 focus-visible:outline-primary rounded"
+                >
+                  {user.name}
+                </button>
                 <span className="truncate text-white/80">{user.email ?? '—'}</span>
                 <span className="uppercase text-xs font-semibold">{user.role}</span>
                 <RowActions user={user} onEdit={onEdit} onDelete={onDelete} />
@@ -61,6 +80,9 @@ function AdminUsersPanel({ users, search, roleFilter, setSearch, setRoleFilter, 
             ))
           )}
         </div>
+      {isPhotoModalOpen && photoUser && (
+        <PhotoModal user={photoUser} onClose={closePhotoModal} />
+      )}
       </div>
     </section>
   )
@@ -159,6 +181,101 @@ function RowLoading() {
 function EmptyState({ message }: { message: string }) {
   return (
     <div className="px-4 py-6 text-center text-sm text-white/60">{message}</div>
+  )
+}
+
+type PhotoModalProps = {
+  user: Member
+  onClose: () => void
+}
+
+function PhotoModal({ user, onClose }: PhotoModalProps) {
+  const [downloading, setDownloading] = useState(false)
+  const hasPhoto = Boolean(user.profile_picture_url)
+  const placeholder = 'https://placehold.co/320x320?text=No+Photo'
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [onClose])
+
+  const handleDownload = async () => {
+    if (!hasPhoto || !user.profile_picture_url) return
+    try {
+      setDownloading(true)
+      const response = await fetch(user.profile_picture_url)
+      const blob = await response.blob()
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      const ext = blob.type.split('/')[1] || 'jpg'
+      const filename = `${user.slug || user.id}-photo.${ext}`
+      link.href = url
+      link.download = filename
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+      URL.revokeObjectURL(url)
+    } catch (err) {
+      console.warn('Failed to download photo', err)
+    } finally {
+      setDownloading(false)
+    }
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Runner's photo"
+    >
+      <div
+        className="w-full max-w-lg rounded-lg border border-white/10 bg-gray-950 p-6 shadow-xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <p className="text-xs text-white/60">Runner's Photo</p>
+            <h2 className="text-lg font-semibold">{user.name}</h2>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-md p-2 hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-primary"
+            aria-label="Close"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className="flex justify-center">
+          <img
+            src={hasPhoto ? user.profile_picture_url ?? placeholder : placeholder}
+            alt={hasPhoto ? `${user.name}'s profile` : 'No profile photo'}
+            className="h-64 w-64 rounded-lg object-cover border border-white/10 bg-gray-900"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement
+              if (target.src !== placeholder) target.src = placeholder
+            }}
+          />
+        </div>
+
+        <div className="mt-6 flex justify-center gap-3 text-sm">
+          <button
+            type="button"
+            onClick={handleDownload}
+            disabled={!hasPhoto || downloading}
+            className="rounded-md border border-white/10 px-4 py-2 hover:bg-white/10 disabled:opacity-60"
+          >
+            {downloading ? 'Downloading...' : 'Download photo'}
+          </button>
+        </div>
+      </div>
+    </div>
   )
 }
 

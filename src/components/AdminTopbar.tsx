@@ -9,7 +9,12 @@ type AdminTopbarProps = {
 }
 
 function AdminTopbar({ activeTab, onOpenSidebar, onOpenInviteUser, onOpenCreateEvent }: AdminTopbarProps) {
-  const tabLabel = activeTab === 'users' ? 'User Management' : 'Event Management'
+  const tabLabel = activeTab === 'users'
+    ? 'User Management'
+    : activeTab === 'events'
+      ? 'Event Management'
+      : 'Attendance Management'
+  const actionLabel = activeTab === 'users' ? 'New User' : 'New Event'
 
   return (
     <header className="sticky top-0 z-20 bg-gray-900/80 backdrop-blur border-b border-white/5 px-4 sm:px-6 lg:px-10 py-4 flex items-center justify-between gap-3">
@@ -27,19 +32,20 @@ function AdminTopbar({ activeTab, onOpenSidebar, onOpenInviteUser, onOpenCreateE
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
-        <button
-          className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white hover:opacity-90 transition disabled:opacity-60"
-          onClick={() => {
-            if (activeTab === 'users') onOpenInviteUser?.()
-            if (activeTab === 'events') onOpenCreateEvent?.()
-          }}
-          disabled={activeTab !== 'users' && activeTab !== 'events'}
-        >
-          <HiOutlinePlus className="h-4 w-4" />
-          {activeTab === 'users' ? 'New User' : 'New Event'}
-        </button>
-      </div>
+      {activeTab !== 'attendance' && (
+        <div className="flex items-center gap-2">
+          <button
+            className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white hover:opacity-90 transition"
+            onClick={() => {
+              if (activeTab === 'users') onOpenInviteUser?.()
+              if (activeTab === 'events') onOpenCreateEvent?.()
+            }}
+          >
+            <HiOutlinePlus className="h-4 w-4" />
+            {actionLabel}
+          </button>
+        </div>
+      )}
     </header>
   )
 }

@@ -1,6 +1,7 @@
 import { createClient, type Session } from '@supabase/supabase-js'
 import type { Member, MemberRole } from '../types/members'
 import type { Event } from '../types/events'
+import type { AttendanceRecord } from '../types/attendance'
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
@@ -12,6 +13,47 @@ if (!supabaseUrl || !supabaseKey) {
 const supabase = createClient(supabaseUrl, supabaseKey)
 
 export const api = {
+  getAttendance: async (): Promise<AttendanceRecord[]> => {
+    const { data, error } = await supabase
+      .from('attendance')
+      .select('*, members(id, name, email, slug), events(id, name, event_date, location)')
+      .order('checked_in_at', { ascending: false })
+
+    if (error) {
+      console.error('Error fetching attendance records:', error)
+      return []
+    }
+
+    return (data ?? []) as AttendanceRecord[]
+  },
+
+  updateAttendance: async (id: string, updates: Partial<{ checked_in_at: string }>) => {
+    const { data, error } = await supabase
+      .from('attendance')
+      .update(updates)
+      .eq('id', id)
+      .select('*, members(id, name, email, slug), events(id, name, event_date, location)')
+      .single()
+
+    if (error) {
+      console.error('Error updating attendance record:', error)
+      return null
+    }
+
+    return data as AttendanceRecord
+  },
+
+  deleteAttendance: async (id: string) => {
+    const { error } = await supabase
+      .from('attendance')
+      .delete()
+      .eq('id', id)
+
+    if (error) {
+      console.error('Error deleting attendance record:', error)
+    }
+    return { error }
+  },
   getSession: async (): Promise<Session | null> => {
     const { data, error } = await supabase.auth.getSession()
     if (error) {
@@ -316,7 +358,6 @@ export const api = {
       body: formData,
     })
 
-    console.log('Upload profile picture result:', { data, error })
 
     if (error) {
       throw error

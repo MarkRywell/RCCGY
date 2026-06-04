@@ -9,6 +9,7 @@ import InviteUserModal from '../components/InviteUserModal'
 import AdminUsersPanel from '../components/AdminUsersPanel'
 import EditMemberModal from '../components/EditMemberModal'
 import AdminEventsPanel from '../components/AdminEventsPanel'
+import AdminAttendancePanel from '../components/AdminAttendancePanel'
 import AdminEventModal, { type EventFormValues } from '../components/AdminEventModal'
 
 function Admin() {
@@ -204,7 +205,7 @@ function Admin() {
               onEdit={handleEdit}
               onDelete={handleDelete}
             />
-          ) : (
+          ) : activeTab === 'events' ? (
             <AdminEventsPanel
               events={events}
               search={eventSearch}
@@ -214,6 +215,8 @@ function Admin() {
               onDelete={(ev) => setEventDeleteId(ev.id)}
               deletingId={eventDeleteId}
             />
+          ) : (
+            <AdminAttendancePanel />
           )}
         </main>
 

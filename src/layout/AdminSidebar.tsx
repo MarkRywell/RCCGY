@@ -1,6 +1,6 @@
 import { HiOutlineUsers, HiOutlineCalendar, HiOutlineCog, HiOutlineLogout, HiOutlineX } from 'react-icons/hi'
 
-export type AdminTabKey = 'users' | 'events'
+export type AdminTabKey = 'users' | 'events' | 'attendance'
 
 type AdminSidebarProps = {
   activeTab: AdminTabKey
@@ -40,6 +40,12 @@ function AdminSidebar({ activeTab, onTabChange, onLogout, isOpen, onClose }: Adm
           label="Events"
           active={activeTab === 'events'}
           onClick={() => onTabChange('events')}
+        />
+        <SidebarItem
+          icon={<HiOutlineCalendar className="h-5 w-5" />}
+          label="Attendance"
+          active={activeTab === 'attendance'}
+          onClick={() => onTabChange('attendance')}
         />
         <div className="h-px bg-white/10 my-2" />
         <SidebarItem

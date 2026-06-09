@@ -8,7 +8,6 @@ function AdminAttendancePanel() {
   const [search, setSearch] = useState('')
   const [eventFilter, setEventFilter] = useState('')
   const [loading, setLoading] = useState(true)
-  const [updatingId, setUpdatingId] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
   useEffect(() => {
@@ -31,18 +30,6 @@ function AdminAttendancePanel() {
       }
     } finally {
       setDeletingId(null)
-    }
-  }
-
-  const handleUpdate = async (id: string) => {
-    setUpdatingId(id)
-    try {
-      const updatedRecord = await api.updateAttendance(id, { checked_in_at: new Date().toISOString() })
-      if (updatedRecord) {
-        setAttendance((records) => records.map((record) => (record.id === id ? updatedRecord : record)))
-      }
-    } finally {
-      setUpdatingId(null)
     }
   }
 
@@ -98,10 +85,10 @@ function AdminAttendancePanel() {
       </div>
 
       <div className="rounded-lg border border-white/10 bg-gray-950">
-        <div className="grid grid-cols-6 gap-2 px-4 py-3 text-xs font-semibold uppercase tracking-wide text-white/60">
+        <div className="grid grid-cols-5 gap-2 px-4 py-3 text-xs font-semibold uppercase tracking-wide text-white/60 md:grid-cols-6">
           <span className="col-span-2">Member</span>
           <span className="col-span-2">Event</span>
-          <span>Checked In</span>
+          <span className="hidden md:block">Checked In</span>
           <span className="text-right">Actions</span>
         </div>
         <div className="divide-y divide-white/5">
@@ -111,7 +98,7 @@ function AdminAttendancePanel() {
             <EmptyState message="No attendance records found" />
           ) : (
             filteredAttendance.map((record) => (
-              <div key={record.id} className="grid grid-cols-6 gap-2 px-4 py-3 text-sm items-center">
+              <div key={record.id} className="grid grid-cols-5 gap-2 px-4 py-3 text-sm items-center md:grid-cols-6">
                 <div className="col-span-2 min-w-0">
                   <div className="truncate font-medium">{record.members?.name ?? record.member_id}</div>
                   <div className="truncate text-xs text-white/60">{record.members?.email ?? record.members?.slug ?? 'No member details'}</div>
@@ -120,11 +107,9 @@ function AdminAttendancePanel() {
                   <div className="truncate text-white/90">{record.events?.name ?? record.event_id}</div>
                   <div className="truncate text-xs text-white/60">{formatEventMeta(record)}</div>
                 </div>
-                <span className="text-white/80">{formatDateTime(record.checked_in_at)}</span>
+                <span className="hidden text-white/80 md:block">{formatDateTime(record.checked_in_at)}</span>
                 <RowActions
-                  onUpdate={() => handleUpdate(record.id)}
                   onDelete={() => handleDelete(record.id)}
-                  updating={updatingId === record.id}
                   deleting={deletingId === record.id}
                 />
               </div>
@@ -137,19 +122,15 @@ function AdminAttendancePanel() {
 }
 
 function RowActions({
-  onUpdate,
   onDelete,
-  updating,
   deleting,
 }: {
-  onUpdate: () => void
   onDelete: () => void
-  updating: boolean
   deleting: boolean
 }) {
   const [open, setOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement | null>(null)
-  const busy = updating || deleting
+  const busy = deleting
 
   useEffect(() => {
     if (!open) return
@@ -169,14 +150,6 @@ function RowActions({
   return (
     <div className="flex justify-end text-xs">
       <div className="hidden md:flex gap-2">
-        <button
-          type="button"
-          className="rounded-md border border-white/10 px-2 py-1 hover:bg-white/10 disabled:opacity-70"
-          onClick={onUpdate}
-          disabled={busy}
-        >
-          {updating ? 'Updating...' : 'Refresh'}
-        </button>
         <button
           type="button"
           className="rounded-md border border-red-500/50 text-red-300 px-2 py-1 hover:bg-red-500/10 disabled:opacity-70"
@@ -201,14 +174,6 @@ function RowActions({
 
         {open && (
           <div className="absolute right-0 z-20 mt-2 w-32 rounded-md border border-white/10 bg-gray-950 p-1 shadow-lg">
-            <button
-              type="button"
-              onClick={() => { close(); onUpdate() }}
-              className="w-full rounded-md px-3 py-2 text-left text-xs hover:bg-white/10 disabled:opacity-70"
-              disabled={busy}
-            >
-              {updating ? 'Updating...' : 'Refresh'}
-            </button>
             <button
               type="button"
               onClick={() => { close(); onDelete() }}

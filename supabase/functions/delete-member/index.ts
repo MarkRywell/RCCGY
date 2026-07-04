@@ -125,14 +125,17 @@ serve(async (req: Request) => {
     // GET TARGET MEMBER
     // =========================================
 
-    const { data: targetMember } =
+    const { data: targetMember, error: targetMemberError } =
       await adminSupabase
         .from("members")
-        .select("role")
-        .eq("id", user_id)
+        .select("role, user_id")
+        .eq("user_id", user_id)
         .single();
 
-    console.log("Target member:", user_id, targetMember);
+    console.log("Target member:", user_id, {
+      targetMember,
+      targetMemberError,
+    });
 
     if (!targetMember) {
       return new Response(

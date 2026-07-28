@@ -16,7 +16,7 @@ function Footer() {
                   RCCGY
                 </h1>
               </Link>
-              <p className=''>Fast or slow, we go. RCCGY: <br /> For the Undeterred.</p>
+              <p>Fast or slow, we go. RCCGY: <br /> #outrunyourexcuses</p>
             </div>
           </div>
 

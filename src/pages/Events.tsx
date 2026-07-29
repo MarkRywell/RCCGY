@@ -78,6 +78,15 @@ function Events() {
                   title={event.name}
                   location={event.location ?? "TBA"}
                   image={event.photo_url || FALLBACK_EVENT_IMAGE}
+                  date={event.event_date ? new Date(event.event_date).toLocaleString(undefined, {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true,
+                    timeZone: 'UTC',
+                  }) : undefined}
                 />
               ))}
             </InViewAnimate>

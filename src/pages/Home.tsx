@@ -48,7 +48,15 @@ function Home() {
 
   const photo = upcoming?.photo_url || FALLBACK_EVENT_IMAGE;
   const title = upcoming?.name || 'Coming Soon';
-  const date = upcoming?.event_date ? new Date(upcoming.event_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : null;
+  const date = upcoming?.event_date ? new Date(upcoming.event_date).toLocaleString(undefined, {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true,
+                    timeZone: 'UTC',
+                  }) : null;
 
   return (
     <>

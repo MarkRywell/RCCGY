@@ -151,7 +151,7 @@ function AdminEventModal({ open, initialEvent, onClose, onSubmit, submitting }: 
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm text-white/80">Upload Event Photo (overrides URL)</label>
+            <label className="text-sm text-white/80">Upload Event Photo</label>
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
               <label className="inline-flex w-full sm:w-auto cursor-pointer items-center justify-center gap-2 rounded-md border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white hover:bg-white/10 transition">
                 <input

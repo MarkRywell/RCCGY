@@ -7,7 +7,6 @@ import { GenerateQRCode, type GenerateQRCodeRef } from "../lib/qrCode";
 import type { Member } from "../types/members";
 
 type EditForm = {
-    name: string;
     phone: string;
     time_5k: string;
     time_10k: string;
@@ -26,7 +25,6 @@ function MemberProfile() {
     const [isOwner, setIsOwner] = useState(false);
 
     const [editForm, setEditForm] = useState<EditForm>({
-        name: "",
         phone: "",
         time_5k: "",
         time_10k: "",
@@ -68,7 +66,6 @@ function MemberProfile() {
             if (session?.user?.id && data.user_id === session.user.id) {
                 setIsOwner(true);
                 setEditForm({
-                    name: data.name || "",
                     phone: data.phone || "",
                     time_5k: data.time_5k || "",
                     time_10k: data.time_10k || "",
@@ -139,19 +136,12 @@ function MemberProfile() {
         setSaveSuccess(false);
         setSaving(true);
         const payload = {
-            name: editForm.name.trim(),
             phone: editForm.phone.trim() || null,
             time_5k: editForm.time_5k.trim() || null,
             time_10k: editForm.time_10k.trim() || null,
             time_half_marathon: editForm.time_half_marathon.trim() || null,
             time_marathon: editForm.time_marathon.trim() || null,
         };
-
-        if (!payload.name) {
-            setSaveError("Name is required");
-            setSaving(false);
-            return;
-        }
 
         const { error: updateError, data } = await api.updateMember(member.id, payload);
         if (updateError) {
@@ -263,17 +253,7 @@ function MemberProfile() {
 
                     {isOwner ? (
                         <form className="space-y-4" onSubmit={handleSave}>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <label className="flex flex-col gap-1 text-left">
-                                    <span className="text-sm text-gray-300">Name</span>
-                                    <input
-                                        type="text"
-                                        className="rounded bg-gray-900 border border-gray-700 px-3 py-2 text-white"
-                                        value={editForm.name}
-                                        onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
-                                        disabled={saving}
-                                    />
-                                </label>
+                            
                                 <label className="flex flex-col gap-1 text-left">
                                     <span className="text-sm text-gray-300">Phone</span>
                                     <input
@@ -284,7 +264,7 @@ function MemberProfile() {
                                         disabled={saving}
                                     />
                                 </label>
-                            </div>
+                           
 
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                 {[{

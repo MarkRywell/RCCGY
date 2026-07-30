@@ -16,6 +16,27 @@ type Props = {
 function AdminUsersPanel({ users, search, roleFilter, setSearch, setRoleFilter, loading, onEdit, onDelete }: Props) {
   const [photoUser, setPhotoUser] = useState<Member | null>(null)
   const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+
+  const pageSize = 10
+  const totalUsers = users.length
+  const totalPages = Math.max(1, Math.ceil(totalUsers / pageSize))
+  const pageStart = (currentPage - 1) * pageSize
+  const pageEnd = Math.min(pageStart + pageSize, totalUsers)
+  const paginatedUsers = users.slice(pageStart, pageEnd)
+  const totalLabel = roleFilter === 'admin'
+    ? 'Total Admins'
+    : roleFilter === 'member'
+      ? 'Total Members'
+      : 'Total Users'
+
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [search, roleFilter])
+
+  useEffect(() => {
+    setCurrentPage((page) => Math.min(page, totalPages))
+  }, [totalPages])
 
   const openPhotoModal = (user: Member) => {
     setPhotoUser(user)
@@ -51,6 +72,13 @@ function AdminUsersPanel({ users, search, roleFilter, setSearch, setRoleFilter, 
         </select>
       </div>
 
+      <div className="flex flex-col gap-1 text-sm text-white/70 sm:flex-row sm:items-center sm:justify-between">
+        <span className="font-medium text-white">{totalLabel}: {totalUsers}</span>
+        {totalUsers > 0 && (
+          <span>Showing {pageStart + 1}-{pageEnd} of {totalUsers}</span>
+        )}
+      </div>
+
       <div className="rounded-lg border border-white/10 bg-gray-950">
         <div className="grid grid-cols-5 gap-2 px-4 py-3 text-xs font-semibold uppercase tracking-wide text-white/60">
           <span className="col-span-2">Name</span>
@@ -58,13 +86,13 @@ function AdminUsersPanel({ users, search, roleFilter, setSearch, setRoleFilter, 
           <span>Role</span>
           <span className="text-right">Actions</span>
         </div>
-        <div className="divide-y divide-white/5">
+        <div className="min-h-[440px] divide-y divide-white/5">
           {loading ? (
             <RowLoading />
           ) : users.length === 0 ? (
             <EmptyState message="No users found" />
           ) : (
-            users.map((user) => (
+            paginatedUsers.map((user) => (
               <div key={user.id} className="grid grid-cols-5 gap-2 px-4 py-3 text-sm items-center">
                 <button
                   type="button"
@@ -80,10 +108,36 @@ function AdminUsersPanel({ users, search, roleFilter, setSearch, setRoleFilter, 
             ))
           )}
         </div>
-      {isPhotoModalOpen && photoUser && (
-        <PhotoModal user={photoUser} onClose={closePhotoModal} />
-      )}
+        
+        {isPhotoModalOpen && photoUser && (
+          <PhotoModal user={photoUser} onClose={closePhotoModal} />
+        )}
+        
       </div>
+
+      {totalUsers > 0 && (
+          <div className="flex flex-col gap-3 border-t border-white/5 px-4 py-3 text-sm text-white/70 sm:flex-row sm:items-center sm:justify-between">
+            <span>Page {currentPage} of {totalPages}</span>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+                disabled={loading || currentPage === 1}
+                className="rounded-md border border-white/10 px-3 py-2 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                Previous
+              </button>
+              <button
+                type="button"
+                onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
+                disabled={loading || currentPage === totalPages}
+                className="rounded-md border border-white/10 px-3 py-2 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
     </section>
   )
 }

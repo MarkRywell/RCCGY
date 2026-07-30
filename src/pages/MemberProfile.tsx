@@ -91,7 +91,9 @@ function MemberProfile() {
         return "https://placehold.co/208x208?text=Member"; // 52*4 px placeholder
     }, [member?.profile_picture_url]);
 
-    const memberUrl = slug ? `https://rannncrew.netlify.app/member/${slug}` : "";
+    const public_url = import.meta.env.VITE_PUBLIC_URL || "https://rannncrew.netlify.app";
+
+    const memberUrl = slug ? `${public_url}/member/${slug}` : "";
 
     useEffect(() => {
         if (!isQrModalOpen) return;

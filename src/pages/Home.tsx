@@ -76,7 +76,7 @@ function Home() {
               <h2 className='text-3xl sm:text-4xl font-semibold'>Your hype run fam in Cagayan de Oro City!</h2>
               <p className='text-lg sm:text-xl'>We're more than a run club - we're a growing community built on movement, support, and solid weekly vibes.</p>
               <a
-                href="https://docs.google.com/forms/d/e/1FAIpQLSe4EMt3eUE7S50xB0X57kfmOndxFNcy0HVOppbhKCowJdkcQg/viewform"
+                href="https://docs.google.com/forms/d/1l6p20jj9o6WEabshrhD6_YwzmCjEDzXMnmj-T4up1-U/viewform"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-block w-fit bg-secondary text-black font-bold px-4 py-2 rounded-md mt-2 transition-all duration-200 hover:scale-105 hover:text-white"

@@ -3,10 +3,15 @@ export type MemberRole = 'admin' | 'member';
 export type Member = {
     id: string; // uuid
     user_id?: string | null;
+    member_id: number;
     slug: string;
     name: string;
     email?: string | null;
     phone?: string | null;
+    address?: string | null;
+    emergency_contact?: string | null;
+    shoe_size?: number | null;
+    shirt_size?: string | null;
     role: MemberRole;
     profile_picture_url?: string | null;
     profile_picture_public_id?: string | null;

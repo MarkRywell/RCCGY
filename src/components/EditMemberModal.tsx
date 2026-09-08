@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import api from '../lib/supabase'
 import type { Member } from '../types/members'
 
@@ -11,31 +11,33 @@ type Props = {
 type FormState = {
   name: string
   phone: string
+  address: string
+  emergency_contact: string
+  shoe_size: string
+  shirt_size: string
   profile_picture_url: string
   profile_picture_public_id: string
 }
 
+const shirtSizeOptions = ['XS', 'Small', 'Medium', 'Large', 'XL', 'XXL', 'XXXL']
+
+const getFormState = (member: Member): FormState => ({
+  name: member.name ?? '',
+  phone: member.phone ?? '',
+  address: member.address ?? '',
+  emergency_contact: member.emergency_contact ?? '',
+  shoe_size: member.shoe_size?.toString() ?? '',
+  shirt_size: member.shirt_size ?? '',
+  profile_picture_url: member.profile_picture_url ?? '',
+  profile_picture_public_id: member.profile_picture_public_id ?? '',
+})
+
 function EditMemberModal({ member, onClose, onSaved }: Props) {
-  const [form, setForm] = useState<FormState>({
-    name: member?.name ?? '',
-    phone: member?.phone ?? '',
-    profile_picture_url: member?.profile_picture_url ?? '',
-    profile_picture_public_id: member?.profile_picture_public_id ?? '',
-  })
+  const [form, setForm] = useState<FormState>(() => getFormState(member))
   const [error, setError] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const isFirstRender = useRef(true)
-
-  const initialForm = useMemo<FormState>(
-    () => ({
-      name: member?.name ?? '',
-      phone: member?.phone ?? '',
-      profile_picture_url: member?.profile_picture_url ?? '',
-      profile_picture_public_id: member?.profile_picture_public_id ?? '',
-    }),
-    [member?.name, member?.phone, member?.profile_picture_public_id, member?.profile_picture_url]
-  )
 
   useEffect(() => {
     // Avoid cascading renders warning: only reset state when member identity changes after first render
@@ -43,11 +45,11 @@ function EditMemberModal({ member, onClose, onSaved }: Props) {
       isFirstRender.current = false
       return
     }
-    setForm(initialForm)
+    setForm(getFormState(member))
     setError(null)
     setUploading(false)
     setSubmitting(false)
-  }, [initialForm])
+  }, [member])
 
   const onSelectFile = async (file?: File) => {
     if (!file) return
@@ -73,9 +75,18 @@ function EditMemberModal({ member, onClose, onSaved }: Props) {
 
     const name = form.name.trim()
     const phone = form.phone.trim()
+    const address = form.address.trim()
+    const emergencyContact = form.emergency_contact.trim()
+    const shoeSize = form.shoe_size.trim()
+    const shirtSize = form.shirt_size.trim()
 
     if (!name) {
       setError('Name is required')
+      return
+    }
+
+    if (shoeSize && !/^\d+$/.test(shoeSize)) {
+      setError('Shoe size must be a whole number')
       return
     }
 
@@ -83,6 +94,10 @@ function EditMemberModal({ member, onClose, onSaved }: Props) {
     const { error: updateError } = await api.updateMember(member.id, {
       name,
       phone: phone || null,
+      address: address || null,
+      emergency_contact: emergencyContact || null,
+      shoe_size: shoeSize ? Number(shoeSize) : null,
+      shirt_size: shirtSize || null,
       profile_picture_url: form.profile_picture_url || null,
       profile_picture_public_id: form.profile_picture_public_id || null,
     })
@@ -136,6 +151,61 @@ function EditMemberModal({ member, onClose, onSaved }: Props) {
               placeholder="Optional"
               disabled={submitting}
             />
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-sm text-white/80">Address</label>
+            <textarea
+              value={form.address}
+              onChange={(e) => setForm((f) => ({ ...f, address: e.target.value }))}
+              className="min-h-20 w-full rounded-md border border-white/10 bg-gray-900 px-3 py-2 text-sm outline-none focus:border-primary"
+              placeholder="Optional"
+              disabled={submitting}
+            />
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-sm text-white/80">Emergency Contact</label>
+            <input
+              type="text"
+              value={form.emergency_contact}
+              onChange={(e) => setForm((f) => ({ ...f, emergency_contact: e.target.value }))}
+              className="w-full rounded-md border border-white/10 bg-gray-900 px-3 py-2 text-sm outline-none focus:border-primary"
+              placeholder="Optional"
+              disabled={submitting}
+            />
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="space-y-1">
+              <label className="text-sm text-white/80">Shoe Size (US)</label>
+              <input
+                type="number"
+                min="0"
+                step="1"
+                inputMode="numeric"
+                value={form.shoe_size}
+                onChange={(e) => setForm((f) => ({ ...f, shoe_size: e.target.value }))}
+                className="w-full rounded-md border border-white/10 bg-gray-900 px-3 py-2 text-sm outline-none focus:border-primary"
+                placeholder="Optional"
+                disabled={submitting}
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-sm text-white/80">Shirt Size</label>
+              <select
+                value={form.shirt_size}
+                onChange={(e) => setForm((f) => ({ ...f, shirt_size: e.target.value }))}
+                className="w-full rounded-md border border-white/10 bg-gray-900 px-3 py-2 text-sm outline-none focus:border-primary"
+                disabled={submitting}
+              >
+                <option value="">Select size</option>
+                {shirtSizeOptions.map((size) => (
+                  <option key={size} value={size}>{size}</option>
+                ))}
+              </select>
+            </div>
           </div>
 
           <div className="space-y-2">

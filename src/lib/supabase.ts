@@ -128,7 +128,7 @@ export const api = {
 
     if (search && search.trim()) {
       const like = `%${search.trim()}%`
-      query = query.or(`name.ilike.${like},email.ilike.${like},phone.ilike.${like}`)
+      query = query.or(`name.ilike.${like},email.ilike.${like},phone.ilike.${like},address.ilike.${like},emergency_contact.ilike.${like}`)
     }
 
     const { data, error } = await query

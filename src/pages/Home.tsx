@@ -62,7 +62,7 @@ function Home() {
     <>
       <div className="min-h-screen w-full flex flex-col">
         <div className="relative h-screen xl:h-screen w-full">
-          <img src="https://res.cloudinary.com/di8bd6f96/image/upload/v1777566897/rccgy/banner_sta52t.jpg" alt="RANNN Crew banner" className="absolute inset-0 h-full w-full object-cover" />
+          <img src="https://res.cloudinary.com/di8bd6f96/image/upload/v1785913847/rccgy/home_banner_nlwmjj.jpg" alt="RANNN Crew banner" className="absolute inset-0 h-full w-full object-cover object-[75%_center]" />
 
           {/* dark overlay */}
           <div className="absolute inset-0 bg-black/40" />
@@ -70,13 +70,9 @@ function Home() {
           { /* content */}
           <div className='relative h-full z-10 flex flex-col sm:flex-row justify-between sm:items-center px-10 py-10 gap-5 sm:px-20 sm:py-10 sm:gap-5 xl:gap-40'>
             <div className='flex flex-col gap-4 text-white sm:flex-3 xl:justify-start xl:items-start animate-hero-enter'>
-              <div>
-                <h1 className="text-3xl lg:text-5xl font-bold">
-                  Rannn <span className="text-secondary">Crew</span> CGY
-                </h1>
-                <h2 className='text-2xl xl:font-bold font-serif'><span className="text-secondary normal">runnr</span><span className='italic'>club</span></h2>
-              </div>
-
+              <h1 className="text-3xl lg:text-5xl font-bold">
+                Rannn <span className="text-secondary">Crew</span> CGY
+              </h1>
               <h2 className='text-3xl sm:text-4xl font-semibold'>Your hype run fam in Cagayan de Oro City!</h2>
               <p className='text-lg sm:text-xl'>We're more than a run club - we're a growing community built on movement, support, and solid weekly vibes.</p>
               <a

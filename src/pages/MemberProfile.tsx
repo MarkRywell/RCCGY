@@ -42,6 +42,8 @@ const normalizeRecordTime = (value?: string | null) => {
 
 const isValidRecordTime = (value: string) => value === "" || /^\d+(?::[0-5]\d){0,2}$/.test(value);
 
+const formatMemberId = (memberId: number) => String(memberId).padStart(4, '0')
+
 function MemberProfile() {
     const { slug } = useParams<{ slug: string }>();
     const [member, setMember] = useState<Member | null>(null);
@@ -289,6 +291,7 @@ function MemberProfile() {
 
                     <h1 className="text-3xl font-bold">{name}</h1>
                     <h2 className="text-xl text-secondary font-semibold">{role.toUpperCase()}</h2>
+                    <p className="text-secondary font-semibold">MEMBER ID - {formatMemberId(member.member_id)}</p>
                     <p className="text-sm font-semibold text-gray-400">{slug || "N/A"}</p>
                     <div className={isOwner ? "flex flex-col gap-2 w-full px-5 md:w-1/2" : "hidden"}>
                         <div className="flex justify-between items-center">

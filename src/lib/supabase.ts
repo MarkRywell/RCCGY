@@ -127,8 +127,16 @@ export const api = {
     }
 
     if (search && search.trim()) {
-      const like = `%${search.trim()}%`
-      query = query.or(`name.ilike.${like},email.ilike.${like},phone.ilike.${like},address.ilike.${like},emergency_contact.ilike.${like}`)
+      const trimmedSearch = search.trim()
+      const like = `%${trimmedSearch}%`
+      const filters = [`name.ilike.${like}`, `email.ilike.${like}`, `address.ilike.${like}`]
+      const parsedMemberId = Number(trimmedSearch)
+
+      if (/^\d+$/.test(trimmedSearch) && Number.isSafeInteger(parsedMemberId)) {
+        filters.push(`member_id.eq.${parsedMemberId}`)
+      }
+
+      query = query.or(filters.join(','))
     }
 
     const { data, error } = await query

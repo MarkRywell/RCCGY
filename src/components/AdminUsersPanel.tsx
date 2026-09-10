@@ -13,6 +13,8 @@ type Props = {
   onDelete: (user: Member) => void
 }
 
+const formatMemberId = (memberId: number) => String(memberId).padStart(4, '0')
+
 function AdminUsersPanel({ users, search, roleFilter, setSearch, setRoleFilter, loading, onEdit, onDelete }: Props) {
   const [photoUser, setPhotoUser] = useState<Member | null>(null)
   const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false)
@@ -56,7 +58,7 @@ function AdminUsersPanel({ users, search, roleFilter, setSearch, setRoleFilter, 
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search users (name, email, phone)"
+            placeholder="Search users (ID, name, email)"
             className="flex-1 bg-transparent text-sm outline-none placeholder:text-white/40"
           />
         </div>
@@ -83,7 +85,7 @@ function AdminUsersPanel({ users, search, roleFilter, setSearch, setRoleFilter, 
         <div className="grid grid-cols-5 gap-2 px-4 py-3 text-xs font-semibold uppercase tracking-wide text-white/60">
           <span className="col-span-2">Name</span>
           <span>Email</span>
-          <span>Role</span>
+          <span>Member ID</span>
           <span className="text-right">Actions</span>
         </div>
         <div className="min-h-[440px] divide-y divide-white/5">
@@ -102,7 +104,7 @@ function AdminUsersPanel({ users, search, roleFilter, setSearch, setRoleFilter, 
                   {user.name}
                 </button>
                 <span className="truncate text-white/80">{user.email ?? '—'}</span>
-                <span className="uppercase text-xs font-semibold">{user.role}</span>
+                <span className="text-xs font-semibold text-white/80">{formatMemberId(user.member_id)}</span>
                 <RowActions user={user} onEdit={onEdit} onDelete={onDelete} />
               </div>
             ))

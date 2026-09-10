@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { HiOutlineMail, HiOutlineLockClosed } from 'react-icons/hi'
 import api from '../lib/supabase'
 import Logo from '../assets/logos/logo-bg.png'
@@ -114,6 +114,9 @@ function Login() {
                         </button>
                     </form>
                 </div>
+                <p className="mt-4 text-sm text-gray-400">
+                    Forgot your password? <Link to="/reset-password" className="text-secondary hover:underline">Reset it here</Link>
+                </p>
             </div>
         </>
     )

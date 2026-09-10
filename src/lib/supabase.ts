@@ -237,6 +237,17 @@ export const api = {
     return { data, error: null }
   },
 
+  resetPasswordForEmail: async (email: string, redirectTo: string) => {
+    const { data, error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo })
+
+    if (error) {
+      console.error('Password reset request failed:', error.message)
+      return { data: null, error }
+    }
+
+    return { data, error: null }
+  },
+
   getEvents: async (opts: { search?: string; startDate?: string; endDate?: string } = {}): Promise<Event[]> => {
     const { search, startDate, endDate } = opts
     let query = supabase.from('events').select('*').order('event_date', { ascending: true })

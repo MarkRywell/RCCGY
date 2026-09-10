@@ -17,6 +17,8 @@ const NotFound = lazy(() => import('./pages/NotFound'));
 const MemberProfile = lazy(() => import('./pages/MemberProfile'));
 const MemberMe = lazy(() => import('./pages/MemberMe'));
 const Login = lazy(() => import('./pages/Login'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword'));
+const NewPassword = lazy(() => import('./pages/NewPassword'));
 const Admin = lazy(() => import('./pages/Admin'));
 const SetPassword = lazy(() => import('./pages/SetPassword'));
 
@@ -51,6 +53,8 @@ function App() {
           <Route path="/member/me" element={<MemberGuard><MemberMe /></MemberGuard>} />
           <Route path="/member/:slug" element={<MemberProfile />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/reset-password/new" element={<NewPassword />} />
           <Route path="/set-password" element={<SetPassword />} />
           <Route path="*" element={<NotFound />} />
         </Route>

@@ -1,5 +1,5 @@
 import { createClient, type Session } from '@supabase/supabase-js'
-import type { Member, MemberRole } from '../types/members'
+import type { CreateMemberPayload, Member, MemberRole, UpdateMemberPayload } from '../types/members'
 import type { Event } from '../types/events'
 import type { AttendanceRecord } from '../types/attendance'
 
@@ -149,7 +149,7 @@ export const api = {
     return (data ?? []) as Member[]
   },
 
-  createMember: async (payload: Partial<Member>) => {
+  createMember: async (payload: CreateMemberPayload) => {
     const { data, error } = await supabase
       .from('members')
       .insert(payload)
@@ -196,7 +196,7 @@ export const api = {
     return { data, error: null }
   },
 
-  updateMember: async (id: string, payload: Partial<Member>) => {
+  updateMember: async (id: string, payload: UpdateMemberPayload) => {
     const { data, error } = await supabase
       .from('members')
       .update(payload)
@@ -211,13 +211,13 @@ export const api = {
     return { data: (data as Member) ?? null, error }
   },
 
-  deleteMember: async (userId: string) => {
+  deleteMember: async (memberRef: string) => {
     const { data, error } =
       await supabase.functions.invoke(
         "delete-member",
         {
           body: {
-            user_id: userId,
+            member_ref: memberRef,
           },
         }
       );

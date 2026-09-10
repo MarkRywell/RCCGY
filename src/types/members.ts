@@ -21,3 +21,10 @@ export type Member = {
     time_marathon?: string | null;
     created_at?: string | null;
 };
+
+export type CreateMemberPayload = Omit<Partial<Member>, 'id' | 'member_id' | 'created_at'>;
+
+export type UpdateMemberPayload = Omit<
+    Partial<Member>,
+    'id' | 'user_id' | 'member_id' | 'created_at'
+>;

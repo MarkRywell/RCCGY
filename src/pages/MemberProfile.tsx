@@ -8,11 +8,41 @@ import type { Member } from "../types/members";
 
 type EditForm = {
     phone: string;
+    address: string;
+    emergency_contact: string;
+    shoe_size: string;
+    shirt_size: string;
     time_5k: string;
     time_10k: string;
     time_half_marathon: string;
     time_marathon: string;
 };
+
+const recordFields = [{
+    label: "5K",
+    key: "time_5k" as const,
+}, {
+    label: "10K",
+    key: "time_10k" as const,
+}, {
+    label: "Half Marathon",
+    key: "time_half_marathon" as const,
+}, {
+    label: "Marathon",
+    key: "time_marathon" as const,
+}];
+
+const shirtSizeOptions = ["XS", "Small", "Medium", "Large", "XL", "XXL", "XXXL"];
+
+const normalizeRecordTime = (value?: string | null) => {
+    const trimmedValue = value?.trim() ?? "";
+
+    return /^n\/?a$/i.test(trimmedValue) ? "" : trimmedValue;
+};
+
+const isValidRecordTime = (value: string) => value === "" || /^\d+(?::[0-5]\d){0,2}$/.test(value);
+
+const formatMemberId = (memberId: number) => String(memberId).padStart(4, '0')
 
 function MemberProfile() {
     const { slug } = useParams<{ slug: string }>();
@@ -26,6 +56,10 @@ function MemberProfile() {
 
     const [editForm, setEditForm] = useState<EditForm>({
         phone: "",
+        address: "",
+        emergency_contact: "",
+        shoe_size: "",
+        shirt_size: "",
         time_5k: "",
         time_10k: "",
         time_half_marathon: "",
@@ -67,10 +101,14 @@ function MemberProfile() {
                 setIsOwner(true);
                 setEditForm({
                     phone: data.phone || "",
-                    time_5k: data.time_5k || "",
-                    time_10k: data.time_10k || "",
-                    time_half_marathon: data.time_half_marathon || "",
-                    time_marathon: data.time_marathon || "",
+                    address: data.address || "",
+                    emergency_contact: data.emergency_contact || "",
+                    shoe_size: data.shoe_size?.toString() ?? "",
+                    shirt_size: data.shirt_size || "",
+                    time_5k: normalizeRecordTime(data.time_5k),
+                    time_10k: normalizeRecordTime(data.time_10k),
+                    time_half_marathon: normalizeRecordTime(data.time_half_marathon),
+                    time_marathon: normalizeRecordTime(data.time_marathon),
                 });
             } else {
                 setIsOwner(false);
@@ -134,15 +172,38 @@ function MemberProfile() {
         if (!member) return;
         setSaveError(null);
         setSaveSuccess(false);
-        setSaving(true);
+        const trimmedRecords = {
+            time_5k: normalizeRecordTime(editForm.time_5k),
+            time_10k: normalizeRecordTime(editForm.time_10k),
+            time_half_marathon: normalizeRecordTime(editForm.time_half_marathon),
+            time_marathon: normalizeRecordTime(editForm.time_marathon),
+        };
+        const invalidRecord = recordFields.find((field) => !isValidRecordTime(trimmedRecords[field.key]));
+        const shoeSize = editForm.shoe_size.trim();
+
+        if (invalidRecord) {
+            setSaveError("Personal records must use numbers, mm:ss, or h:mm:ss format, for example 24:50 or 1:55:18.");
+            return;
+        }
+
+        if (shoeSize && !/^\d+$/.test(shoeSize)) {
+            setSaveError("Shoe size must be a whole number.");
+            return;
+        }
+
         const payload = {
             phone: editForm.phone.trim() || null,
-            time_5k: editForm.time_5k.trim() || null,
-            time_10k: editForm.time_10k.trim() || null,
-            time_half_marathon: editForm.time_half_marathon.trim() || null,
-            time_marathon: editForm.time_marathon.trim() || null,
+            address: editForm.address.trim() || null,
+            emergency_contact: editForm.emergency_contact.trim() || null,
+            shoe_size: shoeSize ? Number(shoeSize) : null,
+            shirt_size: editForm.shirt_size.trim() || null,
+            time_5k: trimmedRecords.time_5k || null,
+            time_10k: trimmedRecords.time_10k || null,
+            time_half_marathon: trimmedRecords.time_half_marathon || null,
+            time_marathon: trimmedRecords.time_marathon || null,
         };
 
+        setSaving(true);
         const { error: updateError, data } = await api.updateMember(member.id, payload);
         if (updateError) {
             setSaveError(updateError.message || "Failed to update member");
@@ -230,15 +291,24 @@ function MemberProfile() {
 
                     <h1 className="text-3xl font-bold">{name}</h1>
                     <h2 className="text-xl text-secondary font-semibold">{role.toUpperCase()}</h2>
+                    <p className="text-secondary font-semibold">MEMBER ID - {formatMemberId(member.member_id)}</p>
                     <p className="text-sm font-semibold text-gray-400">{slug || "N/A"}</p>
-                    <div className={isOwner ? "flex flex-col gap-2 w-full px-5 md:w-1/2 lg:w-1/3" : "hidden"}>
-                        <div className="text-lg flex justify-between items-center">
-                            <p>Email</p>
+                    <div className={isOwner ? "flex flex-col gap-2 w-full px-5 md:w-1/2" : "hidden"}>
+                        <div className="flex justify-between items-center">
+                            <p className="text-secondary">Email</p>
                             <p>{email || "N/A"}</p>
                         </div>
-                        <div className="text-lg flex justify-between items-center">
-                            <p>Phone</p>
+                        <div className="flex justify-between items-center">
+                            <p className="text-secondary">Phone</p>
                             <p>{member.phone || "N/A"}</p>
+                        </div>
+                        <div className="flex justify-between items-start gap-4">
+                            <p className="text-secondary">Address</p>
+                            <p className="text-right">{member.address || "N/A"}</p>
+                        </div>
+                        <div className="flex justify-between items-center gap-4">
+                            <p className="text-secondary">Emergency Contact No.</p>
+                            <p className="text-right">{member.emergency_contact || "N/A"}</p>
                         </div>
                     </div>
                 </div>
@@ -253,7 +323,7 @@ function MemberProfile() {
 
                     {isOwner ? (
                         <form className="space-y-4" onSubmit={handleSave}>
-                            
+                            <div className="grid gap-4 md:grid-cols-2">
                                 <label className="flex flex-col gap-1 text-left">
                                     <span className="text-sm text-gray-300">Phone</span>
                                     <input
@@ -264,30 +334,69 @@ function MemberProfile() {
                                         disabled={saving}
                                     />
                                 </label>
-                           
+
+                                <label className="flex flex-col gap-1 text-left">
+                                    <span className="text-sm text-gray-300">Emergency Contact No.</span>
+                                    <input
+                                        type="tel"
+                                        className="rounded bg-gray-900 border border-gray-700 px-3 py-2 text-white"
+                                        value={editForm.emergency_contact}
+                                        onChange={(e) => setEditForm((f) => ({ ...f, emergency_contact: e.target.value }))}
+                                        disabled={saving}
+                                    />
+                                </label>
+
+                                <label className="flex flex-col gap-1 text-left md:col-span-2">
+                                    <span className="text-sm text-gray-300">Address</span>
+                                    <textarea
+                                        className="min-h-20 rounded bg-gray-900 border border-gray-700 px-3 py-2 text-white"
+                                        value={editForm.address}
+                                        onChange={(e) => setEditForm((f) => ({ ...f, address: e.target.value }))}
+                                        disabled={saving}
+                                    />
+                                </label>
+
+                                <label className="flex flex-col gap-1 text-left">
+                                    <span className="text-sm text-gray-300">Shoe Size (US)</span>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        step="1"
+                                        inputMode="numeric"
+                                        className="rounded bg-gray-900 border border-gray-700 px-3 py-2 text-white"
+                                        value={editForm.shoe_size}
+                                        onChange={(e) => setEditForm((f) => ({ ...f, shoe_size: e.target.value }))}
+                                        disabled={saving}
+                                    />
+                                </label>
+
+                                <label className="flex flex-col gap-1 text-left">
+                                    <span className="text-sm text-gray-300">Shirt/Singlet Size</span>
+                                    <select
+                                        className="rounded bg-gray-900 border border-gray-700 px-3 py-2 text-white"
+                                        value={editForm.shirt_size}
+                                        onChange={(e) => setEditForm((f) => ({ ...f, shirt_size: e.target.value }))}
+                                        disabled={saving}
+                                    >
+                                        <option value="">Select size</option>
+                                        {shirtSizeOptions.map((size) => (
+                                            <option key={size} value={size}>{size}</option>
+                                        ))}
+                                    </select>
+                                </label>
+                            </div>
 
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                {[{
-                                    label: "5K",
-                                    key: "time_5k" as const,
-                                }, {
-                                    label: "10K",
-                                    key: "time_10k" as const,
-                                }, {
-                                    label: "Half Marathon",
-                                    key: "time_half_marathon" as const,
-                                }, {
-                                    label: "Marathon",
-                                    key: "time_marathon" as const,
-                                }].map((item) => (
+                                {recordFields.map((item) => (
                                     <label key={item.key} className="flex flex-col gap-2 bg-gray-700 p-4 rounded text-left">
                                         <span className="text-sm text-secondary">{item.label}</span>
                                         <input
                                             type="text"
+                                            inputMode="numeric"
                                             className="rounded bg-gray-900 border border-gray-600 px-3 py-2 text-white"
                                             value={editForm[item.key]}
                                             onChange={(e) => setEditForm((f) => ({ ...f, [item.key]: e.target.value }))}
-                                            placeholder="e.g. 25:30"
+                                            placeholder="N/A or e.g. 25:30"
                                             disabled={saving}
                                         />
                                     </label>

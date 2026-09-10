@@ -82,12 +82,28 @@ serve(async (req: Request) => {
     // REQUEST BODY
     // =========================================
 
-    const { user_id } = await req.json();
+    const { member_ref } = await req.json();
+    const memberRef = typeof member_ref === "string" ? member_ref.trim() : "";
 
-    if (!user_id) {
+    if (!memberRef) {
       return new Response(
         JSON.stringify({
-          error: "user_id is required",
+          error: "member_ref is required",
+        }),
+        {
+          status: 400,
+          headers: corsHeaders,
+        }
+      );
+    }
+
+    const uuidPattern =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+    if (!uuidPattern.test(memberRef)) {
+      return new Response(
+        JSON.stringify({
+          error: "Invalid member_ref",
         }),
         {
           status: 400,
@@ -100,7 +116,7 @@ serve(async (req: Request) => {
     // PREVENT SELF DELETE
     // =========================================
 
-    if (user_id === user.id) {
+    if (memberRef === user.id) {
       return new Response(
         JSON.stringify({
           error: "You cannot delete yourself",
@@ -128,14 +144,21 @@ serve(async (req: Request) => {
     const { data: targetMember, error: targetMemberError } =
       await adminSupabase
         .from("members")
-        .select("role, user_id")
-        .eq("user_id", user_id)
-        .single();
+        .select("id, role, user_id")
+        .or(`user_id.eq.${memberRef},id.eq.${memberRef}`)
+        .maybeSingle();
 
-    console.log("Target member:", user_id, {
-      targetMember,
-      targetMemberError,
-    });
+    if (targetMemberError) {
+      return new Response(
+        JSON.stringify({
+          error: targetMemberError.message,
+        }),
+        {
+          status: 400,
+          headers: corsHeaders,
+        }
+      );
+    }
 
     if (!targetMember) {
       return new Response(
@@ -144,6 +167,18 @@ serve(async (req: Request) => {
         }),
         {
           status: 404,
+          headers: corsHeaders,
+        }
+      );
+    }
+
+    if (targetMember.user_id === user.id) {
+      return new Response(
+        JSON.stringify({
+          error: "You cannot delete yourself",
+        }),
+        {
+          status: 400,
           headers: corsHeaders,
         }
       );
@@ -183,14 +218,24 @@ serve(async (req: Request) => {
     // ON DELETE CASCADE
     // =========================================
 
-
     // Check if member has user_id value before attempting to delete auth user
     if (!targetMember.user_id) {
-
-      await adminSupabase
+      const { error: memberDeleteError } = await adminSupabase
         .from("members")
         .delete()
-        .eq("id", user_id);
+        .eq("id", targetMember.id);
+
+      if (memberDeleteError) {
+        return new Response(
+          JSON.stringify({
+            error: memberDeleteError.message,
+          }),
+          {
+            status: 400,
+            headers: corsHeaders,
+          }
+        );
+      }
 
       return new Response(
         JSON.stringify({
@@ -206,7 +251,7 @@ serve(async (req: Request) => {
 
     const { error: deleteError } =
       await adminSupabase.auth.admin.deleteUser(
-        user_id
+        targetMember.user_id
       );
 
     if (deleteError) {

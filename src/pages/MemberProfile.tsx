@@ -8,6 +8,7 @@ import type { Member } from "../types/members";
 
 type EditForm = {
     phone: string;
+    birth_date: string;
     address: string;
     emergency_contact: string;
     shoe_size: string;
@@ -56,6 +57,7 @@ function MemberProfile() {
 
     const [editForm, setEditForm] = useState<EditForm>({
         phone: "",
+        birth_date: "",
         address: "",
         emergency_contact: "",
         shoe_size: "",
@@ -101,6 +103,7 @@ function MemberProfile() {
                 setIsOwner(true);
                 setEditForm({
                     phone: data.phone || "",
+                    birth_date: data.birth_date || "",
                     address: data.address || "",
                     emergency_contact: data.emergency_contact || "",
                     shoe_size: data.shoe_size?.toString() ?? "",
@@ -193,6 +196,7 @@ function MemberProfile() {
 
         const payload = {
             phone: editForm.phone.trim() || null,
+            birth_date: editForm.birth_date || null,
             address: editForm.address.trim() || null,
             emergency_contact: editForm.emergency_contact.trim() || null,
             shoe_size: shoeSize ? Number(shoeSize) : null,
@@ -302,6 +306,10 @@ function MemberProfile() {
                             <p className="text-secondary">Phone</p>
                             <p>{member.phone || "N/A"}</p>
                         </div>
+                        <div className="flex justify-between items-center">
+                            <p className="text-secondary">Birth Date</p>
+                            <p>{member.birth_date || "N/A"}</p>
+                        </div>
                         <div className="flex justify-between items-start gap-4">
                             <p className="text-secondary">Address</p>
                             <p className="text-right">{member.address || "N/A"}</p>
@@ -346,10 +354,21 @@ function MemberProfile() {
                                     />
                                 </label>
 
-                                <label className="flex flex-col gap-1 text-left md:col-span-2">
+                                <label className="flex flex-col gap-1 text-left">
+                                    <span className="text-sm text-gray-300">Birth Date</span>
+                                    <input
+                                        type="date"
+                                        className="rounded bg-gray-900 border border-gray-700 px-3 py-2 text-white"
+                                        value={editForm.birth_date}
+                                        onChange={(e) => setEditForm((f) => ({ ...f, birth_date: e.target.value }))}
+                                        disabled={saving}
+                                    />
+                                </label>
+
+                                <label className="flex flex-col gap-1 text-left">
                                     <span className="text-sm text-gray-300">Address</span>
-                                    <textarea
-                                        className="min-h-20 rounded bg-gray-900 border border-gray-700 px-3 py-2 text-white"
+                                    <input
+                                        className="rounded bg-gray-900 border border-gray-700 px-3 py-2 text-white"
                                         value={editForm.address}
                                         onChange={(e) => setEditForm((f) => ({ ...f, address: e.target.value }))}
                                         disabled={saving}

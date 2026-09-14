@@ -9,6 +9,7 @@ export type Member = {
     email?: string | null;
     phone?: string | null;
     address?: string | null;
+    birth_date?: string | null;
     emergency_contact?: string | null;
     shoe_size?: number | null;
     shirt_size?: string | null;

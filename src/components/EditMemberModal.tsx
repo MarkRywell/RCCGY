@@ -12,6 +12,7 @@ type FormState = {
   name: string
   phone: string
   address: string
+  birth_date: string
   emergency_contact: string
   shoe_size: string
   shirt_size: string
@@ -25,6 +26,7 @@ const getFormState = (member: Member): FormState => ({
   name: member.name ?? '',
   phone: member.phone ?? '',
   address: member.address ?? '',
+  birth_date: member.birth_date ?? '',
   emergency_contact: member.emergency_contact ?? '',
   shoe_size: member.shoe_size?.toString() ?? '',
   shirt_size: member.shirt_size ?? '',
@@ -95,6 +97,7 @@ function EditMemberModal({ member, onClose, onSaved }: Props) {
       name,
       phone: phone || null,
       address: address || null,
+      birth_date: form.birth_date || null,
       emergency_contact: emergencyContact || null,
       shoe_size: shoeSize ? Number(shoeSize) : null,
       shirt_size: shirtSize || null,
@@ -172,6 +175,17 @@ function EditMemberModal({ member, onClose, onSaved }: Props) {
               onChange={(e) => setForm((f) => ({ ...f, emergency_contact: e.target.value }))}
               className="w-full rounded-md border border-white/10 bg-gray-900 px-3 py-2 text-sm outline-none focus:border-primary"
               placeholder="Optional"
+              disabled={submitting}
+            />
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-sm text-white/80">Birth Date</label>
+            <input
+              type="date"
+              value={form.birth_date}
+              onChange={(e) => setForm((f) => ({ ...f, birth_date: e.target.value }))}
+              className="w-full rounded-md border border-white/10 bg-gray-900 px-3 py-2 text-sm outline-none focus:border-primary"
               disabled={submitting}
             />
           </div>

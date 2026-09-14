@@ -118,10 +118,6 @@ export const homeImages = [
       alt: "Community",
     },
     {
-      src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1777604050/rccgy/girls_wmlluk.jpg",
-      alt: "Girls",
-    },
-    {
       src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1779200866/rccgy/clout_axy4fh.jpg",
       alt: "Friends"
     },
@@ -130,8 +126,12 @@ export const homeImages = [
       alt: "KICKOFF RUN 2026",
     },
     {
-      src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1777604050/rccgy/party-run1_iozglb.jpg",
-      alt: "KICKOFF RUN 2026",
+      src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1789133121/rccgy/palautot_agllon.jpg",
+      alt: "Palautot",
+    },
+    {
+      src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1777604050/rccgy/girls_wmlluk.jpg",
+      alt: "Girls",
     },
     {
       src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1777604286/rccgy/party-run2_jeqzmh.jpg",

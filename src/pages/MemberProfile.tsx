@@ -411,7 +411,6 @@ function MemberProfile() {
                                         <span className="text-sm text-secondary">{item.label}</span>
                                         <input
                                             type="text"
-                                            inputMode="numeric"
                                             className="rounded bg-gray-900 border border-gray-600 px-3 py-2 text-white"
                                             value={editForm[item.key]}
                                             onChange={(e) => setEditForm((f) => ({ ...f, [item.key]: e.target.value }))}

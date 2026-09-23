@@ -261,11 +261,22 @@ export const api = {
     return { data, error: null }
   },
 
-  resetPasswordForEmail: async (email: string, redirectTo: string) => {
-    const { data, error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo })
+  resetPasswordForEmail: async (email: string) => {
+    const { data, error } = await supabase.auth.resetPasswordForEmail(email)
 
     if (error) {
       console.error('Password reset request failed:', error.message)
+      return { data: null, error }
+    }
+
+    return { data, error: null }
+  },
+
+  verifyPasswordResetOtp: async (email: string, token: string) => {
+    const { data, error } = await supabase.auth.verifyOtp({ email, token, type: 'recovery' })
+
+    if (error) {
+      console.error('Password reset verification failed:', error.message)
       return { data: null, error }
     }
 

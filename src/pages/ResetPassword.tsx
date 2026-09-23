@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { HiOutlineMail } from 'react-icons/hi'
 import api from '../lib/supabase'
 import Logo from '../assets/logos/logo-bg.png'
 
 function ResetPassword() {
+  const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -24,13 +25,13 @@ function ResetPassword() {
     }
 
     setLoading(true)
-    const redirectTo = `${window.location.origin}/reset-password/new`
-    const { error: resetError } = await api.resetPasswordForEmail(trimmedEmail, redirectTo)
+    const { error: resetError } = await api.resetPasswordForEmail(trimmedEmail)
 
     if (resetError) {
-      setError(resetError.message ?? 'Failed to send reset email.')
+      setError(resetError.message ?? 'Failed to send verification code.')
     } else {
       setSent(true)
+      navigate('/reset-password/new', { state: { email: trimmedEmail } })
     }
 
     setLoading(false)
@@ -43,7 +44,7 @@ function ResetPassword() {
         <div className="space-y-2 text-center">
           <h1 className="text-3xl font-bold">Reset Password</h1>
           <p className="text-sm text-gray-400">
-            Enter your email address and we will send you a link to choose a new password.
+            Enter your email address and we will send you a 6-digit verification code.
           </p>
         </div>
 
@@ -75,7 +76,7 @@ function ResetPassword() {
 
           {sent && (
             <p className="text-sm text-green-400" role="status" aria-live="polite">
-              If an account exists for this email, a reset link has been sent.
+              If an account exists for this email, a verification code has been sent.
             </p>
           )}
 
@@ -86,7 +87,7 @@ function ResetPassword() {
               loading ? 'opacity-60 cursor-not-allowed' : 'hover:bg-primary'
             }`}
           >
-            {loading ? 'Sending reset link...' : 'Send Reset Link'}
+            {loading ? 'Sending verification code...' : 'Send Verification Code'}
           </button>
         </form>
 

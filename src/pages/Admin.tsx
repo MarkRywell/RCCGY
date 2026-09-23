@@ -36,6 +36,7 @@ function Admin() {
   const [inviteModalOpen, setInviteModalOpen] = useState(false)
   const [selectedMember, setSelectedMember] = useState<Member | null>(null)
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
 
   const refetchUsers = async (opts?: { search?: string; role?: 'admin' | 'member' }) => {
@@ -51,10 +52,12 @@ function Admin() {
   const handleEdit = (user: Member) => {
     setSelectedMember(user)
     setDeleteConfirmId(null)
+    setDeleteError(null)
   }
 
   const handleDelete = (user: Member) => {
     setSelectedMember(null)
+    setDeleteError(null)
     setDeleteConfirmId(user.user_id ?? user.id)
   }
 
@@ -66,7 +69,11 @@ function Admin() {
       const { error } = await api.deleteMember(deleteConfirmId)
       if (error) {
         console.error('Failed to delete member:', error.message)
+        setDeleteError(error.message)
+        setLoadingUsers(false)
+        return
       }
+      setDeleteError(null)
       setDeleteConfirmId(null)
       setSelectedMember(null)
       await refetchUsers()
@@ -243,7 +250,7 @@ function Admin() {
                 <button
                   type="button"
                   className="rounded-md border border-white/10 px-4 py-2 text-sm hover:bg-white/10"
-                  onClick={() => { if (!deleting) { setDeleteConfirmId(null); setSelectedMember(null) } }}
+                  onClick={() => { if (!deleting) { setDeleteConfirmId(null); setSelectedMember(null); setDeleteError(null) } }}
                   disabled={deleting}
                 >
                   Cancel
@@ -257,6 +264,11 @@ function Admin() {
                   {deleting ? 'Deleting...' : 'Delete'}
                 </button>
               </div>
+              {deleteError && (
+                <p className="text-sm text-red-400" role="alert" aria-live="polite">
+                  {deleteError}
+                </p>
+              )}
             </div>
           </div>
         )}

@@ -212,17 +212,41 @@ export const api = {
   },
 
   deleteMember: async (memberRef: string) => {
-    const { data, error } =
-      await supabase.functions.invoke(
-        "delete-member",
-        {
-          body: {
-            member_ref: memberRef,
-          },
-        }
-      );
+    const result = await supabase.functions.invoke(
+      'delete-member',
+      {
+        body: {
+          member_ref: memberRef,
+        },
+      }
+    )
 
-    return { data, error };
+    if (result.error) {
+      let errorMessage = result.error.message
+
+      try {
+        const res = await result.response?.json()
+
+        if (res?.error) {
+          errorMessage = res.error
+        }
+      } catch {
+        try {
+          const context = 'context' in result.error ? result.error.context : null
+          const res = context instanceof Response ? await context.json() : null
+
+          if (res?.error) {
+            errorMessage = res.error
+          }
+        } catch {
+          // Keep the original invoke error when the response body is unavailable.
+        }
+      }
+
+      return { data: null, error: new Error(errorMessage) }
+    }
+
+    return { data: result.data, error: null }
   },
 
   signInWithEmail: async (email: string, password: string) => {

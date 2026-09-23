@@ -9,6 +9,27 @@ const corsHeaders = {
   "Content-Type": "application/json",
 };
 
+const jsonResponse = (
+  status: number,
+  body: Record<string, unknown>
+) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: corsHeaders,
+  });
+
+const isAuthUserNotFoundError = (error: unknown) => {
+  if (!error || typeof error !== "object") return false;
+
+  const authError = error as {
+    status?: number;
+    message?: string;
+  };
+  const message = authError.message?.toLowerCase() ?? "";
+
+  return authError.status === 404 || message.includes("not found");
+};
+
 serve(async (req: Request) => {
   // =========================================
   // CORS
@@ -149,6 +170,8 @@ serve(async (req: Request) => {
         .maybeSingle();
 
     if (targetMemberError) {
+      console.error("Error loading target member:", targetMemberError);
+
       return new Response(
         JSON.stringify({
           error: targetMemberError.message,
@@ -211,6 +234,45 @@ serve(async (req: Request) => {
       }
     }
 
+    const deleteMemberRecord = async (message: string) => {
+      const { error: memberDeleteError } = await adminSupabase
+        .from("members")
+        .delete()
+        .eq("id", targetMember.id);
+
+      if (memberDeleteError) {
+        console.error("Error deleting member row:", memberDeleteError);
+
+        return jsonResponse(400, {
+          error: memberDeleteError.message,
+        });
+      }
+
+      return jsonResponse(200, {
+        success: true,
+        message,
+      });
+    };
+
+    const clearEventOwnership = async (userId: string) => {
+      const { error: eventCleanupError } = await adminSupabase
+        .from("events")
+        .update({
+          created_by: null,
+        })
+        .eq("created_by", userId);
+
+      if (eventCleanupError) {
+        console.error("Error clearing event ownership:", eventCleanupError);
+
+        return jsonResponse(400, {
+          error: eventCleanupError.message,
+        });
+      }
+
+      return null;
+    };
+
     // =========================================
     // DELETE AUTH USER
     // =========================================
@@ -220,33 +282,39 @@ serve(async (req: Request) => {
 
     // Check if member has user_id value before attempting to delete auth user
     if (!targetMember.user_id) {
-      const { error: memberDeleteError } = await adminSupabase
-        .from("members")
-        .delete()
-        .eq("id", targetMember.id);
+      return await deleteMemberRecord(
+        "Member deleted, but no associated auth user to delete."
+      );
+    }
 
-      if (memberDeleteError) {
-        return new Response(
-          JSON.stringify({
-            error: memberDeleteError.message,
-          }),
-          {
-            status: 400,
-            headers: corsHeaders,
-          }
+    const eventCleanupResponse = await clearEventOwnership(
+      targetMember.user_id
+    );
+
+    if (eventCleanupResponse) {
+      return eventCleanupResponse;
+    }
+
+    const { data: authUserData, error: authLookupError } =
+      await adminSupabase.auth.admin.getUserById(
+        targetMember.user_id
+      );
+
+    if (authLookupError || !authUserData?.user) {
+      console.error("Error loading auth user:", authLookupError);
+
+      if (
+        !authLookupError ||
+        isAuthUserNotFoundError(authLookupError)
+      ) {
+        return await deleteMemberRecord(
+          "Member deleted, but the associated auth user no longer exists."
         );
       }
 
-      return new Response(
-        JSON.stringify({
-          success: true,
-          message: "Member deleted, but no associated auth user to delete.",
-        }),
-        {
-          status: 200,
-          headers: corsHeaders,
-        }
-      );
+      return jsonResponse(400, {
+        error: authLookupError.message,
+      });
     }
 
     const { error: deleteError } =
@@ -255,15 +323,17 @@ serve(async (req: Request) => {
       );
 
     if (deleteError) {
-      return new Response(
-        JSON.stringify({
-          error: deleteError.message,
-        }),
-        {
-          status: 400,
-          headers: corsHeaders,
-        }
-      );
+      console.error("Error deleting auth user:", deleteError);
+
+      if (isAuthUserNotFoundError(deleteError)) {
+        return await deleteMemberRecord(
+          "Member deleted, but the associated auth user no longer exists."
+        );
+      }
+
+      return jsonResponse(400, {
+        error: deleteError.message,
+      });
     }
 
     // =========================================

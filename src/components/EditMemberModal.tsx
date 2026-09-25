@@ -117,14 +117,19 @@ function EditMemberModal({ member, onClose, onSaved }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-      <div className="w-full max-w-xl rounded-lg border border-white/10 bg-gray-950 p-6 shadow-xl">
+    <div
+      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/50 px-4 py-4 sm:items-center sm:py-6"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div className="max-h-[calc(100dvh-2rem)] w-full max-w-xl overflow-y-auto overscroll-contain rounded-lg border border-white/10 bg-gray-950 p-6 shadow-xl">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold">Edit Member</h2>
           <button
             type="button"
             onClick={onClose}
             className="rounded-md p-2 hover:bg-white/10"
+            aria-label="Close"
             disabled={submitting || uploading}
           >
             ✕

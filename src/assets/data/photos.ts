@@ -8,6 +8,16 @@ export const globalPartners: PartnerLogo[] = [
     href: "https://runnr.ph/",
   },
   {
+    src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1790345046/rccgy/sponsors/gcash_ignvlx.png",
+    alt: "GCash",
+    href: "https://www.gcash.com/",
+  },
+  {
+    src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1790345004/rccgy/sponsors/pocari_df5uql.png",
+    alt: "Pocari Sweat",
+    href: "https://www.pocarisweat.com.ph/",
+  },
+  {
     src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1777718209/rccgy/sponsors/coros_mc3qqx.png",
     alt: "Coros",
     href: "https://coros.com/",
@@ -51,6 +61,16 @@ export const localPartners: PartnerLogo[] = [
     href: "https://www.facebook.com/phyxrehab"
   },
   {
+    src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1790346974/rccgy/sponsors/chur_nestss.jpg",
+    alt: "Chur Wellness and Beauty Clinic",
+    href: "https://www.facebook.com/profile.php?id=61587545657218"
+  },
+  {
+    src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1790346974/rccgy/sponsors/hailey_zgm9yw.jpg",
+    alt: "Hailey Beauty PH",
+    href: "https://www.facebook.com/haileybeauty.ph"
+  },
+  {
     src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1778418299/rccgy/sponsors/aid-station_o1gnmn.jpg",
     alt: "Aid Station",
     href: "https://www.facebook.com/profile.php?id=61573099223787"
@@ -71,39 +91,14 @@ export const localPartners: PartnerLogo[] = [
     href: "https://www.facebook.com/salakolens"
   },
   {
-    src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1778418300/rccgy/sponsors/Purp_mhvboq.jpg",
-    alt: "Purp Premium Shoe Care",
-    href: "https://www.facebook.com/purppremiumshoecare"
-  },
-  {
     src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1778418299/rccgy/sponsors/devils-empanada_hqzflj.jpg",
     alt: "Devil's Empanada",
     href: "https://www.facebook.com/Yugybalageer"
   },
   {
-    src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1778418301/rccgy/sponsors/stibs-house_zodl2q.jpg",
-    alt: "Stib's House",
-    href: "https://www.facebook.com/Stibshousecdo"
-  },
-  {
-    src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1778418300/rccgy/sponsors/nenecitas_vuomma.jpg",
-    alt: "Nenecitas Sorbetes",
-    href: "https://www.facebook.com/TheFilipinoIceCream"
-  },
-  {
-    src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1778418300/rccgy/sponsors/flr_vdbq4e.jpg",
-    alt: "FLTR. Coffee",
-    href: "https://www.facebook.com/fltrcoffeeclub"
-  },
-  {
     src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1778418301/rccgy/sponsors/SRI_s62n5x.jpg",
     alt: "SRI Events",
     href: "https://www.facebook.com/profile.php?id=61570376210089"
-  },
-  {
-    src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1778418299/rccgy/sponsors/Amlan_wspfoa.jpg",
-    alt: "AMLAN Purified Water",
-    href: "https://www.facebook.com/amlanph"
   },
   {
     src: "https://res.cloudinary.com/di8bd6f96/image/upload/v1778418300/rccgy/sponsors/roda_vcljpb.jpg",

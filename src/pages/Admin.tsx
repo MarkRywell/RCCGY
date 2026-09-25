@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../lib/supabase'
-import type { Member } from '../types/members'
+import type { Member, MemberRole } from '../types/members'
 import type { Event } from '../types/events'
 import AdminSidebar, { type AdminTabKey } from '../layout/AdminSidebar'
 import AdminTopbar from '../components/AdminTopbar'
@@ -39,15 +39,15 @@ function Admin() {
   const [deleteError, setDeleteError] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
 
-  const refetchUsers = async (opts?: { search?: string; role?: 'admin' | 'member' }) => {
+  const refetchUsers = useCallback(async (opts?: { search?: string; role?: MemberRole }) => {
     setLoadingUsers(true)
     const data = await api.getMembers({
       search: opts?.search ?? userSearch,
-      role: opts?.role ?? (userRoleFilter ? (userRoleFilter as 'admin' | 'member') : undefined),
+      role: opts?.role ?? (userRoleFilter ? (userRoleFilter as MemberRole) : undefined),
     })
     setUsers(data)
     setLoadingUsers(false)
-  }
+  }, [userRoleFilter, userSearch])
 
   const handleEdit = (user: Member) => {
     setSelectedMember(user)
@@ -88,7 +88,7 @@ function Admin() {
       await refetchUsers()
     }
     void run()
-  }, [userSearch, userRoleFilter])
+  }, [refetchUsers])
 
   // Fetch events
   useEffect(() => {
@@ -300,13 +300,16 @@ function Admin() {
           </div>
         )}
 
-        <AdminEventModal
-          open={eventModalOpen}
-          initialEvent={editingEvent}
-          onClose={() => { if (!eventSubmitting) { setEventModalOpen(false); setEditingEvent(null) } }}
-          onSubmit={handleSubmitEvent}
-          submitting={eventSubmitting}
-        />
+        {eventModalOpen && (
+          <AdminEventModal
+            key={editingEvent?.id ?? 'new-event'}
+            open={eventModalOpen}
+            initialEvent={editingEvent}
+            onClose={() => { if (!eventSubmitting) { setEventModalOpen(false); setEditingEvent(null) } }}
+            onSubmit={handleSubmitEvent}
+            submitting={eventSubmitting}
+          />
+        )}
       </div>
     </div>
   )

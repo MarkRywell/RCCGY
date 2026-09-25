@@ -7,13 +7,13 @@ import Footer from '../layout/Footer'
 
 const NotFound = lazy(() => import('../pages/NotFound'))
 
-type MemberGuardProps = {
+type ShopGuardProps = {
   children: React.ReactNode
 }
 
 type GuardState = 'loading' | 'authorized' | 'forbidden'
 
-function MemberGuard({ children }: MemberGuardProps) {
+function ShopGuard({ children }: ShopGuardProps) {
   const [state, setState] = useState<GuardState>('loading')
 
   useEffect(() => {
@@ -23,6 +23,7 @@ function MemberGuard({ children }: MemberGuardProps) {
       const session = await api.getSession()
       if (!active) return
       const userId = session?.user?.id
+
       if (!userId) {
         setState('forbidden')
         return
@@ -31,7 +32,7 @@ function MemberGuard({ children }: MemberGuardProps) {
       const member = await api.getMemberByUserId(userId)
       if (!active) return
 
-      if (!member || (member.role !== 'member' && member.role !== 'shop')) {
+      if (!member || member.role !== 'shop') {
         setState('forbidden')
         return
       }
@@ -63,4 +64,4 @@ function MemberGuard({ children }: MemberGuardProps) {
   return <>{children}</>
 }
 
-export default MemberGuard
+export default ShopGuard

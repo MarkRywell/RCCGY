@@ -7,6 +7,7 @@ import Footer from './layout/Footer.tsx';
 import Loader from './components/Loader.tsx';
 import AdminGuard from './components/AdminGuard.tsx';
 import MemberGuard from './components/MemberGuard.tsx';
+import ShopGuard from './components/ShopGuard.tsx';
 
 const Home = lazy(() => import('./pages/Home'));
 const Events = lazy(() => import('./pages/Events'));
@@ -20,6 +21,7 @@ const Login = lazy(() => import('./pages/Login'));
 const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 const NewPassword = lazy(() => import('./pages/NewPassword'));
 const Admin = lazy(() => import('./pages/Admin'));
+const Shop = lazy(() => import('./pages/Shop'));
 const SetPassword = lazy(() => import('./pages/SetPassword'));
 
 
@@ -61,6 +63,7 @@ function App() {
 
         {/* Admin shell — no Header/Nav/Footer */}
         <Route path="/admin" element={<AdminGuard><Admin /></AdminGuard>} />
+        <Route path="/shop" element={<ShopGuard><Shop /></ShopGuard>} />
       </Routes>
     </Suspense>
   );

@@ -3,6 +3,7 @@ import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { HiLogin, HiLogout, HiUser } from 'react-icons/hi'
 import Logo from '../assets/logos/logo.jpg';
 import api, { supabase } from '../lib/supabase'
+import type { MemberRole } from '../types/members'
 
 const NAV_LINKS = [
     { href: '/', label: 'HOME' },
@@ -12,13 +13,17 @@ const NAV_LINKS = [
     { href: '/contact', label: 'CONTACT' }
 ]
 
+const isMemberRole = (role: string | null | undefined): role is MemberRole => (
+    role === 'admin' || role === 'member' || role === 'shop'
+)
+
 
 function Nav() {
     const [isOpen, setIsOpen] = useState(false)
     const [authReady, setAuthReady] = useState(false)
     const [isAuthed, setIsAuthed] = useState(false)
     const [memberSlug, setMemberSlug] = useState<string | null>(null)
-    const [memberRole, setMemberRole] = useState<'admin' | 'member' | null>(null)
+    const [memberRole, setMemberRole] = useState<MemberRole | null>(null)
     const navigate = useNavigate()
     const location = useLocation()
     const prevBodyOverflow = useRef<string>('')
@@ -37,7 +42,7 @@ function Nav() {
                 const member = await api.getMemberByUserId(userId)
                 if (!active) return
                 setMemberSlug(member?.slug ?? null)
-                setMemberRole(member?.role === 'admin' || member?.role === 'member' ? member.role : null)
+                setMemberRole(isMemberRole(member?.role) ? member.role : null)
             } else {
                 setMemberSlug(null)
                 setMemberRole(null)
@@ -58,7 +63,7 @@ function Nav() {
                     const member = await api.getMemberByUserId(userId)
                     if (!active) return
                     setMemberSlug(member?.slug ?? null)
-                    setMemberRole(member?.role === 'admin' || member?.role === 'member' ? member.role : null)
+                    setMemberRole(isMemberRole(member?.role) ? member.role : null)
                 } else {
                     setMemberSlug(null)
                     setMemberRole(null)
@@ -82,10 +87,15 @@ function Nav() {
         navigate('/')
     }
 
-    const profileHref = memberRole === 'admin' ? '/admin' : (memberSlug ? `/member/${memberSlug}` : '/member/me')
+    const profileHref = memberRole === 'admin'
+        ? '/admin'
+        : memberRole === 'shop'
+            ? '/shop'
+            : (memberSlug ? `/member/${memberSlug}` : '/member/me')
     const isProfileRoute = location.pathname.startsWith('/member')
     const isAdminRoute = location.pathname.startsWith('/admin')
-    const showLogout = isProfileRoute || isAdminRoute
+    const isShopRoute = location.pathname.startsWith('/shop')
+    const showLogout = isProfileRoute || isAdminRoute || isShopRoute
 
     // Lock body scroll while open.
     useEffect(() => {

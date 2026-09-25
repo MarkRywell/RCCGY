@@ -163,11 +163,11 @@ export const api = {
     return { data: (data as Member) ?? null, error }
   },
 
-  inviteMember: async (payload: { email: string; name: string; slug?: string }) => {
-    const { email, name, slug } = payload
+  inviteMember: async (payload: { email: string; name: string; role?: MemberRole; slug?: string }) => {
+    const { email, name, role, slug } = payload
 
     const data = await supabase.functions.invoke('invite-member', {
-      body: { email, name, slug }
+      body: { email, name, role, slug }
     })
 
     if (data.error) {

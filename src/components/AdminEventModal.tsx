@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { HiOutlineX, HiOutlinePhotograph } from 'react-icons/hi'
 import type { Event } from '../types/events'
 
@@ -31,22 +31,6 @@ function AdminEventModal({ open, initialEvent, onClose, onSubmit, submitting }: 
     photo_url: initialEvent?.photo_url ?? '',
     photo_file: null,
   }))
-
-  useEffect(() => {
-    if (!open) return
-    setError(null)
-    setForm({
-      name: initialEvent?.name ?? '',
-      event_date: initialEvent?.event_date ? initialEvent.event_date.slice(0, 16) : '',
-      location: initialEvent?.location ?? '',
-      description: initialEvent?.description ?? '',
-      photo_url: initialEvent?.photo_url ?? '',
-      photo_file: null,
-    })
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ''
-    }
-  }, [open, initialEvent])
 
   if (!open) return null
 

@@ -1,4 +1,4 @@
-export type MemberRole = 'admin' | 'member';
+export type MemberRole = 'admin' | 'member' | 'shop';
 
 export type Member = {
     id: string; // uuid

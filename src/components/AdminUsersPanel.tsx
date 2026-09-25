@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { HiOutlineDotsVertical, HiOutlineSearch } from 'react-icons/hi'
-import type { Member } from '../types/members'
+import type { Member, MemberRole } from '../types/members'
 
 type Props = {
   users: Member[]
@@ -9,13 +9,19 @@ type Props = {
   setSearch: (v: string) => void
   setRoleFilter: (v: string) => void
   loading: boolean
-  onEdit: (user: Member) => void
-  onDelete: (user: Member) => void
+  readOnly?: boolean
+  onEdit?: (user: Member) => void
+  onDelete?: (user: Member) => void
 }
 
 const formatMemberId = (memberId: number) => String(memberId).padStart(4, '0')
+const roleLabels: Record<MemberRole, string> = {
+  admin: 'Admin',
+  member: 'Member',
+  shop: 'Shop',
+}
 
-function AdminUsersPanel({ users, search, roleFilter, setSearch, setRoleFilter, loading, onEdit, onDelete }: Props) {
+function AdminUsersPanel({ users, search, roleFilter, setSearch, setRoleFilter, loading, readOnly = false, onEdit, onDelete }: Props) {
   const [photoUser, setPhotoUser] = useState<Member | null>(null)
   const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
@@ -23,22 +29,17 @@ function AdminUsersPanel({ users, search, roleFilter, setSearch, setRoleFilter, 
   const pageSize = 10
   const totalUsers = users.length
   const totalPages = Math.max(1, Math.ceil(totalUsers / pageSize))
-  const pageStart = (currentPage - 1) * pageSize
+  const safeCurrentPage = Math.min(currentPage, totalPages)
+  const pageStart = (safeCurrentPage - 1) * pageSize
   const pageEnd = Math.min(pageStart + pageSize, totalUsers)
   const paginatedUsers = users.slice(pageStart, pageEnd)
   const totalLabel = roleFilter === 'admin'
     ? 'Total Admins'
     : roleFilter === 'member'
       ? 'Total Members'
-      : 'Total Users'
-
-  useEffect(() => {
-    setCurrentPage(1)
-  }, [search, roleFilter])
-
-  useEffect(() => {
-    setCurrentPage((page) => Math.min(page, totalPages))
-  }, [totalPages])
+      : roleFilter === 'shop'
+        ? 'Total Shop Users'
+        : 'Total Users'
 
   const openPhotoModal = (user: Member) => {
     setPhotoUser(user)
@@ -57,7 +58,10 @@ function AdminUsersPanel({ users, search, roleFilter, setSearch, setRoleFilter, 
           <HiOutlineSearch className="h-4 w-4 text-white/60" />
           <input
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              setCurrentPage(1)
+              setSearch(e.target.value)
+            }}
             placeholder="Search users (ID, name, email)"
             className="flex-1 bg-transparent text-sm outline-none placeholder:text-white/40"
           />
@@ -65,12 +69,16 @@ function AdminUsersPanel({ users, search, roleFilter, setSearch, setRoleFilter, 
 
         <select
           value={roleFilter}
-          onChange={(e) => setRoleFilter(e.target.value)}
+          onChange={(e) => {
+            setCurrentPage(1)
+            setRoleFilter(e.target.value)
+          }}
           className="rounded-md border border-white/10 bg-gray-950 px-3 py-2 text-sm"
         >
           <option value="">All roles</option>
           <option value="admin">Admin</option>
           <option value="member">Member</option>
+          <option value="shop">Shop</option>
         </select>
       </div>
 
@@ -86,7 +94,7 @@ function AdminUsersPanel({ users, search, roleFilter, setSearch, setRoleFilter, 
           <span className="col-span-2">Name</span>
           <span>Email</span>
           <span>Member ID</span>
-          <span className="text-right">Actions</span>
+          <span className="text-right">{readOnly ? 'Role' : 'Actions'}</span>
         </div>
         <div className="min-h-[440px] divide-y divide-white/5">
           {loading ? (
@@ -105,7 +113,11 @@ function AdminUsersPanel({ users, search, roleFilter, setSearch, setRoleFilter, 
                 </button>
                 <span className="truncate text-white/80">{user.email ?? '—'}</span>
                 <span className="text-xs font-semibold text-white/80">{formatMemberId(user.member_id)}</span>
-                <RowActions user={user} onEdit={onEdit} onDelete={onDelete} />
+                {readOnly ? (
+                  <span className="text-right text-xs font-semibold text-white/80">{roleLabels[user.role]}</span>
+                ) : (
+                  <RowActions user={user} onEdit={onEdit} onDelete={onDelete} />
+                )}
               </div>
             ))
           )}
@@ -119,12 +131,12 @@ function AdminUsersPanel({ users, search, roleFilter, setSearch, setRoleFilter, 
 
       {totalUsers > 0 && (
           <div className="flex flex-col gap-3 border-t border-white/5 px-4 py-3 text-sm text-white/70 sm:flex-row sm:items-center sm:justify-between">
-            <span>Page {currentPage} of {totalPages}</span>
+            <span>Page {safeCurrentPage} of {totalPages}</span>
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
-                disabled={loading || currentPage === 1}
+                disabled={loading || safeCurrentPage === 1}
                 className="rounded-md border border-white/10 px-3 py-2 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 Previous
@@ -132,7 +144,7 @@ function AdminUsersPanel({ users, search, roleFilter, setSearch, setRoleFilter, 
               <button
                 type="button"
                 onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
-                disabled={loading || currentPage === totalPages}
+                disabled={loading || safeCurrentPage === totalPages}
                 className="rounded-md border border-white/10 px-3 py-2 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 Next
@@ -146,8 +158,8 @@ function AdminUsersPanel({ users, search, roleFilter, setSearch, setRoleFilter, 
 
 type RowActionsProps = {
   user: Member
-  onEdit: (user: Member) => void
-  onDelete: (user: Member) => void
+  onEdit?: (user: Member) => void
+  onDelete?: (user: Member) => void
 }
 
 function RowActions({ user, onEdit, onDelete }: RowActionsProps) {
@@ -175,14 +187,14 @@ function RowActions({ user, onEdit, onDelete }: RowActionsProps) {
         <button
           type="button"
           className="rounded-md border border-white/10 px-2 py-1 hover:bg-white/10"
-          onClick={() => onEdit(user)}
+          onClick={() => onEdit?.(user)}
         >
           Edit
         </button>
         <button
           type="button"
           className="rounded-md border border-red-500/50 text-red-300 px-2 py-1 hover:bg-red-500/10"
-          onClick={() => onDelete(user)}
+          onClick={() => onDelete?.(user)}
         >
           Delete
         </button>
@@ -204,7 +216,7 @@ function RowActions({ user, onEdit, onDelete }: RowActionsProps) {
             <button
               type="button"
               onClick={() => {
-                onEdit(user)
+                onEdit?.(user)
                 close()
               }}
               className="w-full rounded-md px-3 py-2 text-left text-xs hover:bg-white/10"
@@ -214,7 +226,7 @@ function RowActions({ user, onEdit, onDelete }: RowActionsProps) {
             <button
               type="button"
               onClick={() => {
-                onDelete(user)
+                onDelete?.(user)
                 close()
               }}
               className="w-full rounded-md px-3 py-2 text-left text-xs text-red-300 hover:bg-red-500/10"

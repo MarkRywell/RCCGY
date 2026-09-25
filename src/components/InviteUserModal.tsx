@@ -77,6 +77,7 @@ function InviteUserModal({ open, onClose, onSuccess }: Props) {
     const { error: inviteError } = await api.inviteMember({
       name: form.name.trim(),
       email: form.email.trim(),
+      role: form.role,
       slug: slugToUse || undefined,
     })
 
@@ -143,6 +144,20 @@ function InviteUserModal({ open, onClose, onSuccess }: Props) {
             placeholder="user@example.com"
             disabled={submitting}
           />
+        </div>
+
+        <div className="space-y-1">
+          <label className="text-sm text-white/80">Role</label>
+          <select
+            value={form.role}
+            onChange={(e) => setForm((f) => ({ ...f, role: e.target.value as MemberRole }))}
+            className="w-full rounded-md border border-white/10 bg-gray-900 px-3 py-2 text-sm outline-none focus:border-primary"
+            disabled={submitting}
+          >
+            <option value="member">Member</option>
+            <option value="shop">Shop</option>
+            <option value="admin">Admin</option>
+          </select>
         </div>
 
         <div className="space-y-1">

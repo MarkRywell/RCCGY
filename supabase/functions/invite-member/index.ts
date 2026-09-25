@@ -8,6 +8,8 @@ const corsHeaders = {
   "Content-Type": "application/json",
 };
 
+const allowedRoles = new Set(["admin", "member", "shop"]);
+
 serve(async (req: Request) => {
   // =========================================
   // HANDLE CORS PREFLIGHT
@@ -92,7 +94,8 @@ serve(async (req: Request) => {
     // =========================================
     // PARSE REQUEST BODY
     // =========================================
-    const { email, name, slug } = await req.json();
+    const { email, name, role, slug } = await req.json();
+    const memberRole = role ?? "member";
 
     // =========================================
     // BASIC VALIDATION
@@ -125,6 +128,18 @@ serve(async (req: Request) => {
       return new Response(
         JSON.stringify({
           error: "Invalid slug",
+        }),
+        {
+          status: 400,
+          headers: corsHeaders,
+        }
+      );
+    }
+
+    if (typeof memberRole !== "string" || !allowedRoles.has(memberRole)) {
+      return new Response(
+        JSON.stringify({
+          error: "Invalid role",
         }),
         {
           status: 400,
@@ -222,7 +237,7 @@ serve(async (req: Request) => {
         email,
         name,
         slug,
-        role: "member",
+        role: memberRole,
       });
 
     if (insertError) {

@@ -114,7 +114,7 @@ function Nav() {
     }, [isOpen])
 
     return (
-        <nav className="flex items-center justify-between bg-dark text-white px-4 sm:px-6 lg:px-20 py-4 sm:py-5">
+        <nav className="flex items-center justify-between bg-dark text-white px-4 sm:px-6 lg:px-10 py-4 sm:py-5">
             <Link to="/" className='flex gap-2 items-center flex-2 group cursor-pointer'>
                 <img src={Logo} alt="Logo" className='max-w-20 max-h-10'/>
                 <h1 className="text-2xl sm:text-3xl font-bold cursor-pointer transition-all duration-200 group-hover:text-primary group-hover:scale-105 origin-left">RCCGY</h1>
@@ -122,7 +122,7 @@ function Nav() {
             </Link>
 
             {/* Desktop links */}
-            <ul className="hidden sm:flex gap-5 flex-3 font-bold text-lg">
+            <ul className="hidden min-[769px]:flex gap-5 flex-3 font-bold text-lg">
                 {navLinks.map((link) => (
                     <li key={link.href}>
                         <NavLink
@@ -146,7 +146,7 @@ function Nav() {
                     showLogout ? (
                         <button
                             type="button"
-                            className="hidden sm:inline-flex items-center gap-2 md:gap-1 lg:gap-2 md:pl-4 font-bold text-lg transition-all duration-200 hover:text-primary hover:scale-105"
+                            className="hidden min-[769px]:inline-flex items-center gap-2 md:gap-1 lg:gap-2 md:pl-4 font-bold text-lg transition-all duration-200 hover:text-primary hover:scale-105"
                             aria-label="Log out"
                             onClick={handleLogout}
                         >
@@ -156,7 +156,7 @@ function Nav() {
                     ) : (
                         <button
                             type="button"
-                            className="hidden sm:inline-flex items-center gap-2 md:gap-1 lg:gap-2 md:pl-4 font-bold text-lg transition-all duration-200 hover:text-primary hover:scale-105"
+                            className="hidden min-[769px]:inline-flex items-center gap-2 md:gap-1 lg:gap-2 md:pl-4 font-bold text-lg transition-all duration-200 hover:text-primary hover:scale-105"
                             aria-label="Back to profile"
                             onClick={() => navigate(profileHref)}
                         >
@@ -169,7 +169,7 @@ function Nav() {
                         to="/login"
                         className={({ isActive }) =>
                             [
-                                'hidden sm:inline-flex items-center gap-2 md:gap-1 lg:gap-2 md:pl-4 font-bold text-lg transition-all duration-200 hover:text-primary hover:scale-105',
+                                'hidden min-[769px]:inline-flex items-center gap-2 md:gap-1 lg:gap-2 md:pl-4 font-bold text-lg transition-all duration-200 hover:text-primary hover:scale-105',
                                 isActive ? 'text-white' : '',
                             ].join(' ')
                         }
@@ -181,10 +181,10 @@ function Nav() {
                 )
             )}
 
-            {/* Mobile burger */}
+            {/* Tablet/mobile burger */}
             <button
                 type="button"
-                className="sm:hidden inline-flex items-center justify-center rounded-md p-2 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+                className="inline-flex min-[769px]:hidden items-center justify-center rounded-md p-2 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
                 aria-label={isOpen ? 'Close menu' : 'Open menu'}
                 aria-expanded={isOpen}
                 aria-controls="mobile-menu"
@@ -213,8 +213,8 @@ function Nav() {
                 )}
             </button>
 
-            {/* Mobile slide-over drawer */}
-            <div id="mobile-menu" className="sm:hidden">
+            {/* Tablet/mobile slide-over drawer */}
+            <div id="mobile-menu" className="min-[769px]:hidden">
                 {/* Backdrop */}
                 <div
                     className={

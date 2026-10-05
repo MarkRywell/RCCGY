@@ -23,6 +23,11 @@ export type Member = {
     created_at?: string | null;
 };
 
+export type MemberDirectoryRow = Pick<
+    Member,
+    'id' | 'member_id' | 'slug' | 'name' | 'profile_picture_url' | 'created_at'
+>;
+
 export type CreateMemberPayload = Omit<Partial<Member>, 'id' | 'member_id' | 'created_at'>;
 
 export type UpdateMemberPayload = Omit<

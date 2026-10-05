@@ -16,6 +16,7 @@ const Contact = lazy(() => import('./pages/Contact'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const MemberProfile = lazy(() => import('./pages/MemberProfile'));
 const MemberMe = lazy(() => import('./pages/MemberMe'));
+const MemberDirectory = lazy(() => import('./pages/MemberDirectory'));
 const Login = lazy(() => import('./pages/Login'));
 const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 const NewPassword = lazy(() => import('./pages/NewPassword'));
@@ -50,6 +51,7 @@ function App() {
           <Route path="/partners" element={<Partners />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/members" element={<MemberGuard><MemberDirectory /></MemberGuard>} />
           <Route path="/member/me" element={<MemberGuard><MemberMe /></MemberGuard>} />
           <Route path="/member/:slug" element={<MemberProfile />} />
           <Route path="/login" element={<Login />} />

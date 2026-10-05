@@ -1,5 +1,5 @@
 import { createClient, type Session } from '@supabase/supabase-js'
-import type { CreateMemberPayload, Member, MemberRole, UpdateMemberPayload } from '../types/members'
+import type { CreateMemberPayload, Member, MemberDirectoryRow, MemberRole, UpdateMemberPayload } from '../types/members'
 import type { Event } from '../types/events'
 import type { AttendanceRecord } from '../types/attendance'
 
@@ -147,6 +147,37 @@ export const api = {
     }
 
     return (data ?? []) as Member[]
+  },
+
+  getMemberDirectory: async (opts: { search?: string } = {}): Promise<MemberDirectoryRow[]> => {
+    const { search } = opts
+    let query = supabase
+      .from('members')
+      .select('id, member_id, slug, name, profile_picture_url, created_at')
+      .eq('role', 'member')
+      .order('name', { ascending: true })
+
+    if (search && search.trim()) {
+      const trimmedSearch = search.trim()
+      const like = `%${trimmedSearch}%`
+      const filters = [`name.ilike.${like}`, `slug.ilike.${like}`]
+      const parsedMemberId = Number(trimmedSearch)
+
+      if (/^\d+$/.test(trimmedSearch) && Number.isSafeInteger(parsedMemberId)) {
+        filters.push(`member_id.eq.${parsedMemberId}`)
+      }
+
+      query = query.or(filters.join(','))
+    }
+
+    const { data, error } = await query
+
+    if (error) {
+      console.error('Error fetching member directory:', error)
+      return []
+    }
+
+    return (data ?? []) as MemberDirectoryRow[]
   },
 
   createMember: async (payload: CreateMemberPayload) => {

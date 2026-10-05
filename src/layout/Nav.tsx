@@ -86,6 +86,9 @@ function Nav() {
     const isProfileRoute = location.pathname.startsWith('/member')
     const isAdminRoute = location.pathname.startsWith('/admin')
     const showLogout = isProfileRoute || isAdminRoute
+    const navLinks = authReady && memberRole === 'member'
+        ? [...NAV_LINKS, { href: '/members', label: 'MEMBERS' }]
+        : NAV_LINKS
 
     // Lock body scroll while open.
     useEffect(() => {
@@ -120,7 +123,7 @@ function Nav() {
 
             {/* Desktop links */}
             <ul className="hidden sm:flex gap-5 flex-3 font-bold text-lg">
-                {NAV_LINKS.map((link) => (
+                {navLinks.map((link) => (
                     <li key={link.href}>
                         <NavLink
                             to={link.href}
@@ -255,7 +258,7 @@ function Nav() {
                     </div>
 
                     <ul className="flex flex-col gap-1 px-2 py-3 font-bold text-lg">
-                        {NAV_LINKS.map((link) => (
+                        {navLinks.map((link) => (
                             <li key={link.href}>
                                 <NavLink
                                     to={link.href}

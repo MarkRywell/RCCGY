@@ -1,8 +1,16 @@
 
-function EventCard ({ image, title, location, date }: { image: string; title: string; location: string, date?: string }) {
-    return (
+type EventCardProps = {
+    image: string;
+    title: string;
+    location: string;
+    date?: string;
+    href?: string;
+};
+
+function EventCard ({ image, title, location, date, href }: EventCardProps) {
+    const className = "relative w-full min-h-40 max-h-40 xl:max-h-60 rounded-xl overflow-hidden flex animate-hero-enter transition-transform duration-200 ease-out hover:scale-[1.02] focus-visible:scale-[1.02] focus-visible:outline focus-visible:outline-2 focus-visible:outline-secondary";
+    const content = (
         <>
-        <div className="relative w-full min-h-40 max-h-40 xl:max-h-60 rounded-xl overflow-hidden flex animate-hero-enter">
             <div className="absolute top-0 left-0 w-2/4 sm:w-1/3 h-full flex flex-col gap-2 bg-dark [clip-path:polygon(0_0,75%_0,100%_50%,75%_100%,0_100%)] p-4 xl:p-10 justify-center text-white font-mono">
                 <h2 className="text-base xs:text-lg lg:text-2xl font-bold">{title}</h2>
                 <div className="flex gap-1 items-center">
@@ -32,8 +40,27 @@ function EventCard ({ image, title, location, date }: { image: string; title: st
             <div className="w-full">
                 <img src={image} alt={title} className="h-full w-full object-cover xl:pl-60" />
             </div>
-        </div>
         </>
+    );
+
+    if (href) {
+        return (
+            <a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Register for ${title}`}
+                className={className}
+            >
+                {content}
+            </a>
+        );
+    }
+
+    return (
+        <div className={className}>
+            {content}
+        </div>
     )
 }
 

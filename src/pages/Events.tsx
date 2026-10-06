@@ -104,16 +104,19 @@ function Events() {
               title="Monday Strides"
               location="Rio De Oro Boulevard"
               image="https://res.cloudinary.com/di8bd6f96/image/upload/v1777606832/rccgy/running1_o18557.jpg"
+              href="https://docs.google.com/forms/d/e/1FAIpQLSfAuJVMtkBzQgCODZAU5jHXyQazO1MhUqX2BO7J7MeSK-dWww/viewform"
             />
             <EventCard
               title="Speed Wednesday"
               location="Rio De Oro Boulevard"
               image="https://res.cloudinary.com/di8bd6f96/image/upload/v1777710072/rccgy/run1_ds3exk.jpg"
+              href="https://docs.google.com/forms/d/e/1FAIpQLSclglg-DkdfW8GRt_5r2RCqvrtCi3ghK-6_PACk-W-kIPM9lw/viewform"
             />
             <EventCard
               title="Friday Community Run"
               location="Rio De Oro Boulevard"
               image="https://res.cloudinary.com/di8bd6f96/image/upload/v1777606831/rccgy/stretching_t06x4t.jpg"
+              href="https://docs.google.com/forms/d/e/1FAIpQLSebdPJEENf3nihceNhyFJWHIaEYJXpmIOlj-rWvRFoFKDVFSQ/viewform"
             />
           </InViewAnimate>
         </div>

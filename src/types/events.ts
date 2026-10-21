@@ -5,6 +5,7 @@ export type Event = {
   location?: string | null
   event_date: string // timestamptz ISO string
   photo_url?: string | null
+  event_link?: string | null
   created_by?: string | null
   created_at?: string | null
   updated_at?: string | null

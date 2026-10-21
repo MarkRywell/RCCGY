@@ -122,6 +122,7 @@ function Admin() {
         location: values.location?.trim() || null,
         description: values.description?.trim() || null,
         photo_url: values.photo_url?.trim() || null,
+        event_link: values.event_link?.trim() || null,
       }
 
       let eventId = editingEvent?.id
@@ -300,13 +301,15 @@ function Admin() {
           </div>
         )}
 
-        <AdminEventModal
-          open={eventModalOpen}
-          initialEvent={editingEvent}
-          onClose={() => { if (!eventSubmitting) { setEventModalOpen(false); setEditingEvent(null) } }}
-          onSubmit={handleSubmitEvent}
-          submitting={eventSubmitting}
-        />
+        {eventModalOpen && (
+          <AdminEventModal
+            open={eventModalOpen}
+            initialEvent={editingEvent}
+            onClose={() => { if (!eventSubmitting) { setEventModalOpen(false); setEditingEvent(null) } }}
+            onSubmit={handleSubmitEvent}
+            submitting={eventSubmitting}
+          />
+        )}
       </div>
     </div>
   )

@@ -1,51 +1,66 @@
-# Clickable Weekly Events Plan
+# Clickable Upcoming Event Link Plan
 
 ## Goal
-Make the three weekly `EventCard` items on `src/pages/Events.tsx` clickable links that open their assigned Google Forms in a new browser tab, and add a subtle size increase on hover.
+Make the homepage upcoming event card in `src/pages/Home.tsx` clickable when the event has an `event_link`, opening the link in a new tab. Add a nullable `event_link` column to Supabase events so admins can store a Google Form, Facebook post, or other event URL.
 
-## Current Context
-- `src/pages/Events.tsx` renders upcoming events from Supabase and static weekly events.
-- `src/components/EventCard.tsx` currently renders a non-clickable visual card with props: `image`, `title`, `location`, and optional `date`.
-- Upcoming event cards should keep their current behavior unless a link is explicitly supplied.
+## Decisions
+- Use database column name `event_link` to match existing snake_case columns like `event_date` and `photo_url`.
+- Keep the link optional. Events without `event_link` should render exactly like the current non-clickable card.
+- Use a standard anchor with `target="_blank"` and `rel="noopener noreferrer"`; do not use JavaScript `window.open`.
+- Add admin create/edit support so the link can be set from the existing admin event modal.
+
+## Affected Files
+- `supabase/migrations/<new timestamp>_add_event_link_to_events.sql`
+- `src/types/events.ts`
+- `src/components/AdminEventModal.tsx`
+- `src/pages/Admin.tsx`
+- `src/pages/Home.tsx`
 
 ## Implementation Steps
-1. Update `src/components/EventCard.tsx` props to accept an optional `href?: string`.
-2. Refactor the component so the card content is built once and wrapped conditionally:
-   - If `href` is provided, render an `<a>` wrapper.
-   - If `href` is not provided, render the existing non-link container behavior.
-3. For linked cards, set:
-   - `href={href}`
-   - `target="_blank"`
-   - `rel="noopener noreferrer"`
-   - an accessible label such as `aria-label={`Register for ${title}`}`
-4. Add the hover growth animation to the card root/wrapper classes:
-   - `transition-transform duration-200 ease-out`
-   - `hover:scale-[1.02]`
-   - optionally `focus-visible:scale-[1.02] focus-visible:outline focus-visible:outline-2 focus-visible:outline-secondary` for keyboard users.
-5. Ensure the card remains full-width by applying existing sizing/layout classes to the clickable element when linked.
-6. Update only the weekly cards in `src/pages/Events.tsx` with the supplied URLs:
-   - Monday Strides: `https://docs.google.com/forms/d/e/1FAIpQLSfAuJVMtkBzQgCODZAU5jHXyQazO1MhUqX2BO7J7MeSK-dWww/viewform`
-   - Speed Wednesday: `https://docs.google.com/forms/d/e/1FAIpQLSclglg-DkdfW8GRt_5r2RCqvrtCi3ghK-6_PACk-W-kIPM9lw/viewform`
-   - Friday Community Run: `https://docs.google.com/forms/d/e/1FAIpQLSebdPJEENf3nihceNhyFJWHIaEYJXpmIOlj-rWvRFoFKDVFSQ/viewform`
+1. Create a new Supabase migration under `supabase/migrations/`, for example `20261020143300_add_event_link_to_events.sql`:
+   ```sql
+   alter table events
+   add column event_link text;
+   ```
+2. Update `src/types/events.ts`:
+   - Add `event_link?: string | null` to `Event`.
+3. Update `src/components/AdminEventModal.tsx`:
+   - Add `event_link?: string | null` to `EventFormValues`.
+   - Initialize `event_link` from `initialEvent?.event_link ?? ''` in both form initializers.
+   - Add a visible input labeled `Event Link` or `Registration / Post Link`.
+   - Use placeholder text such as `https://facebook.com/... or https://docs.google.com/forms/...`.
+   - Validate non-empty `event_link` with the same basic `https?://` URL pattern used for `photo_url`.
+   - Error message can be `Event link must be a valid URL (https://...)`.
+4. Update `src/pages/Admin.tsx` event save payload:
+   - Add `event_link: values.event_link?.trim() || null` to the `Partial<Event>` payload.
+5. Update `src/pages/Home.tsx`:
+   - Derive `const eventLink = upcoming?.event_link?.trim()` near the existing `photo`, `title`, and `date` constants.
+   - Build the current card content once to avoid duplicating markup.
+   - If `eventLink` exists, wrap the card with an `<a>` using:
+     - `href={eventLink}`
+     - `target="_blank"`
+     - `rel="noopener noreferrer"`
+     - `aria-label={`Open event link for ${title}`}`
+   - If no `eventLink`, render the current `<div>` card.
+   - Preserve existing classes and visual layout.
+   - Add optional hover/focus affordance only to linked cards, for example `transition-transform duration-200 hover:scale-[1.02] focus-visible:scale-[1.02] focus-visible:outline focus-visible:outline-2 focus-visible:outline-secondary`.
+6. No changes are required in `src/lib/supabase.ts` because event queries use `select('*')`, so the new column will be returned automatically after migration.
 
-## Constraints And Decisions
-- Do not wrap the cards directly in `Events.tsx`; adding an optional `href` prop keeps link behavior reusable and avoids duplicating card layout classes.
-- Do not change dynamic upcoming events unless future data includes registration URLs.
-- Preserve the current visual design, image behavior, and responsive layout.
-- Use standard anchors instead of JavaScript `window.open` so browser behavior, accessibility, and security attributes are correct.
-
-## Risks And Edge Cases
-- Scaling a full-width card could clip slightly if a parent has restrictive overflow; current weekly section containers do not appear to enforce clipping, so `scale-[1.02]` should be safe.
-- If hover scale causes horizontal overflow on small screens, reduce to `hover:scale-[1.01]` or add a containing wrapper with `overflow-visible`.
-- Ensure `target="_blank"` always includes `rel="noopener noreferrer"`.
+## Edge Cases
+- Empty or whitespace-only `event_link` should be saved as `null` and should not make the homepage card clickable.
+- Invalid admin input like `facebook.com/post` without `https://` should be rejected.
+- Homepage should not show an empty link target if old rows do not have the new column populated.
+- If hover scaling causes clipping in the hero layout, reduce scale to `1.01` or apply the transform only to larger breakpoints.
 
 ## Validation
-1. Run the project type/lint check available in `package.json` if present, or at minimum run the normal build command.
-2. Open the Events page locally.
-3. Verify each weekly card grows subtly on hover.
-4. Verify keyboard focus is visible on linked cards.
-5. Click each weekly card and confirm the matching Google Form opens in a new tab.
-6. Confirm upcoming event cards remain non-clickable unless given an `href`.
+1. Run `npm run build`.
+2. Run `npm run lint`; note any existing unrelated lint failures separately.
+3. Apply/run the Supabase migration in the local/project environment.
+4. Create or edit an event in Admin with an `https://` Facebook or Google Forms URL.
+5. Confirm the event row stores `event_link`.
+6. Open the homepage and verify the upcoming event card opens the stored URL in a new tab.
+7. Clear the event link and verify the same card is no longer clickable.
+8. Confirm existing Events page weekly links still work after this change.
 
 ## Open Questions
-None. The requested behavior and target URLs are fully specified.
+None.

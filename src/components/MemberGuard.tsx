@@ -1,9 +1,6 @@
 import { lazy, useEffect, useState } from 'react'
 import api from '../lib/supabase'
 import Loader from './Loader'
-import Header from '../layout/Header'
-import Nav from '../layout/Nav'
-import Footer from '../layout/Footer'
 
 const NotFound = lazy(() => import('../pages/NotFound'))
 
@@ -47,18 +44,7 @@ function MemberGuard({ children }: MemberGuardProps) {
   }, [])
 
   if (state === 'loading') return <Loader />
-  if (state === 'forbidden') {
-    return (
-      <div className="min-h-dvh w-full overflow-x-hidden">
-        <div className="sticky top-0 z-50">
-          <Header />
-          <Nav />
-        </div>
-        <NotFound />
-        <Footer />
-      </div>
-    )
-  }
+  if (state === 'forbidden') return <NotFound />
 
   return <>{children}</>
 }

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { HiOutlineX, HiOutlinePhotograph } from 'react-icons/hi'
 import type { Event } from '../types/events'
 
@@ -16,6 +16,7 @@ export type EventFormValues = {
   location?: string | null
   description?: string | null
   photo_url?: string | null
+  event_link?: string | null
   photo_file?: File | null
 }
 
@@ -29,24 +30,9 @@ function AdminEventModal({ open, initialEvent, onClose, onSubmit, submitting }: 
     location: initialEvent?.location ?? '',
     description: initialEvent?.description ?? '',
     photo_url: initialEvent?.photo_url ?? '',
+    event_link: initialEvent?.event_link ?? '',
     photo_file: null,
   }))
-
-  useEffect(() => {
-    if (!open) return
-    setError(null)
-    setForm({
-      name: initialEvent?.name ?? '',
-      event_date: initialEvent?.event_date ? initialEvent.event_date.slice(0, 16) : '',
-      location: initialEvent?.location ?? '',
-      description: initialEvent?.description ?? '',
-      photo_url: initialEvent?.photo_url ?? '',
-      photo_file: null,
-    })
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ''
-    }
-  }, [open, initialEvent])
 
   if (!open) return null
 
@@ -68,6 +54,14 @@ function AdminEventModal({ open, initialEvent, onClose, onSubmit, submitting }: 
       const urlPattern = /^(https?:\/\/).+/i
       if (!urlPattern.test(form.photo_url.trim())) {
         setError('Photo URL must be a valid URL (https://...)')
+        return
+      }
+    }
+
+    if (form.event_link && form.event_link.trim()) {
+      const urlPattern = /^(https?:\/\/).+/i
+      if (!urlPattern.test(form.event_link.trim())) {
+        setError('Event link must be a valid URL (https://...)')
         return
       }
     }
@@ -146,6 +140,18 @@ function AdminEventModal({ open, initialEvent, onClose, onSubmit, submitting }: 
               onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
               className="min-h-24 w-full rounded-md border border-white/10 bg-gray-900 px-3 py-2 text-sm outline-none focus:border-primary"
               placeholder="Details about the event"
+              disabled={submitting}
+            />
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-sm text-white/80">Event Link</label>
+            <input
+              type="url"
+              value={form.event_link ?? ''}
+              onChange={(e) => setForm((f) => ({ ...f, event_link: e.target.value }))}
+              className="w-full rounded-md border border-white/10 bg-gray-900 px-3 py-2 text-sm outline-none focus:border-primary"
+              placeholder="https://facebook.com/... or https://docs.google.com/forms/..."
               disabled={submitting}
             />
           </div>

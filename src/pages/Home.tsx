@@ -48,6 +48,7 @@ function Home() {
 
   const photo = upcoming?.photo_url || FALLBACK_EVENT_IMAGE;
   const title = upcoming?.name || 'Coming Soon';
+  const eventLink = upcoming?.event_link?.trim();
   const date = upcoming?.event_date ? new Date(upcoming.event_date).toLocaleString(undefined, {
                     month: 'short',
                     day: 'numeric',
@@ -57,6 +58,23 @@ function Home() {
                     hour12: true,
                     timeZone: 'UTC',
                   }) : null;
+  const upcomingEventCardClassName = `block w-full sm:flex-none sm:max-w-sm xl:max-w-md md:max-w-72 rounded-2xl overflow-hidden bg-black/30 p-4 text-white animate-hero-enter-right${eventLink ? ' transition-transform duration-200 ease-out hover:scale-[1.02] focus-visible:scale-[1.02] focus-visible:outline focus-visible:outline-2 focus-visible:outline-secondary' : ''}`;
+  const upcomingEventCardContent = (
+    <>
+      <p className="inline-flex items-center w-fit bg-secondary font-bold px-2 py-2 rounded-t-md mb-0.5 text-black">NEW EVENT</p>
+      <div className="flex flex-col gap-2">
+        <div className="relative w-full">
+          <div className="absolute inset-0 bg-black/30" />
+          <img src={photo} alt={title} className="block w-full xs:h-70 md:h-72 rounded-tr-md rounded-br-md rounded-bl-md object-cover" />
+        </div>
+        <div className="flex flex-col gap-1">
+          <p className="text-lg font-semibold">{title}</p>
+          {date && <p className="text-sm text-gray-200">{date}</p>}
+          {error && <p className="text-sm text-red-300">{error}</p>}
+        </div>
+      </div>
+    </>
+  );
 
   return (
     <>
@@ -85,20 +103,21 @@ function Home() {
               </a>
             </div>
             {(!loading && upcoming) && (
-              <div className="w-full sm:flex-none sm:max-w-sm xl:max-w-md md:max-w-72 rounded-2xl overflow-hidden bg-black/30 p-4 text-white animate-hero-enter-right">
-                <p className="inline-flex items-center w-fit bg-secondary font-bold px-2 py-2 rounded-t-md mb-0.5 text-black">NEW EVENT</p>
-                <div className="flex flex-col gap-2">
-                  <div className="relative w-full">
-                    <div className="absolute inset-0 bg-black/30" />
-                    <img src={photo} alt={title} className="block w-full xs:h-70 md:h-72 rounded-tr-md rounded-br-md rounded-bl-md object-cover" />
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <p className="text-lg font-semibold">{title}</p>
-                    {date && <p className="text-sm text-gray-200">{date}</p>}
-                    {error && <p className="text-sm text-red-300">{error}</p>}
-                  </div>
+              eventLink ? (
+                <a
+                  href={eventLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Open event link for ${title}`}
+                  className={upcomingEventCardClassName}
+                >
+                  {upcomingEventCardContent}
+                </a>
+              ) : (
+                <div className={upcomingEventCardClassName}>
+                  {upcomingEventCardContent}
                 </div>
-              </div>
+              )
             )}
           </div>
         </div>

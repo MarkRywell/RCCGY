@@ -87,6 +87,7 @@ function Events() {
                     hour12: true,
                     timeZone: 'UTC',
                   }) : undefined}
+                  href={event.event_link?.trim() || undefined}
                 />
               ))}
             </InViewAnimate>
